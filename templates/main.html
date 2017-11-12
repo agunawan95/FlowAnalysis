@@ -1,0 +1,93 @@
+{% extends "layouts/layout-main.html" %}
+{% block content %}
+<div class="row">
+    <div class="col">
+        <h1><i class="lnr lnr-home"></i> Home</h1>
+    </div>
+    <div class="col">
+        <div class="text-right">
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="text-center">
+                    <a href="#">
+                        <img src="{{ url_for('static', filename='img/bulb.png') }}" alt="">
+                    </a>
+                    <hr>
+                    <h5 class="text-white">10 Projects</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <div class="text-center">
+                    <a href="#">
+                        <img src="{{ url_for('static', filename='img/folder.png') }}" alt="">
+                    </a>
+                    <hr>
+                    <h5 class="text-white">50 Files</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <div class="text-center">
+                    <a href="#">
+                        <img src="{{ url_for('static', filename='img/cube.png') }}" alt="" width="64" height="64">
+                    </a>
+                    <hr>
+                    <h5 class="text-white">25 Models</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="text-center">
+                    <a href="#">
+                        <img src="{{ url_for('static', filename='img/man.png') }}" alt="" width="64" height="64">
+                    </a>
+                    <hr>
+                    <h5 class="text-white">Change Profile</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<div class="row">
+    <div class="col-sm-8">
+        <h5><i class="lnr lnr-history"></i> Logs</h5>
+        <hr>
+        <div class="row">
+            <div class="col-sm-1">1</div>
+            <div class="col-sm-11">[INFO] Andre Has Login to System</div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <h5><i class="lnr lnr-coffee-cup"></i> Latest Project</h5>
+        <hr>
+        <div class="list-group">
+            <a href="#" class="list-group-item  list-group-item-action active">Cras justo odio</a>
+            <a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
+            <a href="#" class="list-group-item list-group-item-action disabled">Morbi leo risus</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

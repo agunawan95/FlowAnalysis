@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Workspace</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+        <!-- Linear Icon CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='linear/style.css') }}">
+
+        <!-- Intro JS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/introjs.css') }}">
+
+        <!-- JQuery Confirm -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='jquery-confirm/jquery-confirm.min.css') }}">
+
+        <!-- JQuery -->
+        <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
+
+        <!-- Bootstrap Form Helper -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrapformhelpers/css/bootstrap-formhelpers.css') }}">
+        <script src="{{ url_for('static', filename='bootstrapformhelpers/js/bootstrap-formhelpers.js') }}"></script>
+
+        <!-- Halfling -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/glyphicons-halflings.css') }}">
+    </head>
+    <script type="text/javascript">
+        $.delete = function(url, data, callback, type){
+
+            if ( $.isFunction(data) ){
+            type = type || callback,
+                callback = data,
+                data = {}
+            }
+
+            return $.ajax({
+                url: url,
+                type: 'DELETE',
+                success: callback,
+                data: data,
+                contentType: type
+            });
+        }
+
+        $.put = function(url, data, callback, type){
+
+            if ( $.isFunction(data) ){
+                type = type || callback,
+                callback = data,
+                data = {}
+            }
+
+            return $.ajax({
+                url: url,
+                type: 'PUT',
+                success: callback,
+                data: data,
+                contentType: type
+            });
+        }
+    </script>
+    <body>
+        <div class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="" style="width: 32px; height: 32px"> &nbsp; Flow Analysis</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarColor02" data-step="1" data-intro="Ok, wasn't that fun?" data-position='bottom' data-scrollTo='tooltip'>
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item {% if session['page'] == 'home' %} active {% endif %}">
+                        <a href="/" class="nav-link"><i class="lnr lnr-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item dropdown {% if session['page'] == 'file' %} active {% endif %}">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="lnr lnr-briefcase"></i> Files <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-file-empty"></i> My Files</a></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-link"></i> Shared With Me</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown {% if session['page'] == 'enterprise' %} active {% endif %}">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="lnr lnr-apartment"></i> Enterprise <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item"><a href="/users"><i class="lnr lnr-users"></i> Enterprise User</a></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-trash"></i> Enterprise Recycle Bin</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown {% if session['page'] == 'project' %} active {% endif %}">
+                        <a href="/" class="nav-link"><i class="lnr lnr-rocket"></i> My Project</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav navbar-right">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><i class="lnr lnr-exit"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="container" style="margin-top: 20px;">
+            {% block content %}{% endblock %}
+        </div>
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+        <script src="{{ url_for('static', filename='js/intro.js') }}"></script>
+        <script src="{{ url_for('static', filename='jquery-confirm/jquery-confirm.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='notify/bootstrap-notify.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='notify/bootstrap-notify.min.js') }}"></script>
+    </body>
+</html>

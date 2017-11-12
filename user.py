@@ -1,6 +1,7 @@
 import database
 import hashlib
 import pymysql
+import os
 
 
 class User(database.Database):
@@ -10,6 +11,27 @@ class User(database.Database):
     err = 0
     msg = ''
     data = None
+    count = 0
+    user_per_page = 10
+    offset = 0
+
+    def __init__(self):
+        database.Database.__init__(self)
+        sql = "SELECT COUNT(*) as count FROM user"
+        self.cur.execute(sql)
+        self.count = self.cur.fetchone()['count']
+
+    def set_user_per_page(self, user_count):
+        self.user_per_page = user_count
+
+    def set_offset(self, offset):
+        self.offset = offset
+
+    def next_page(self):
+        self.offset += self.user_per_page
+
+    def get_page_count(self):
+        return round(self.count / self.user_per_page)
 
     def login(self, username, password):
         """
@@ -62,7 +84,7 @@ class User(database.Database):
         :return: List of User
         :rtype: List
         """
-        sql = "SELECT * FROM user WHERE auth <> 'root'"
+        sql = "SELECT * FROM user WHERE auth <> 'root' LIMIT " + str(self.user_per_page) + " OFFSET " + str(self.offset)
         self.cur.execute(sql)
         data = self.cur.fetchall()
         return data
@@ -74,7 +96,7 @@ class User(database.Database):
         :return: List of User
         :rtype: List
         """
-        sql = "SELECT * FROM user WHERE auth = 'admin'"
+        sql = "SELECT * FROM user WHERE auth = 'admin' LIMIT " + str(self.user_per_page) + " OFFSET " + str(self.offset)
         self.cur.execute(sql)
         data = self.cur.fetchall()
         return data
@@ -98,6 +120,7 @@ class User(database.Database):
 
         :param username: Username of a User
         :param password: Password of a User
+        :param email: Email of a User
         :param auth: Authentication of a User
         :param admin: Administrator of a User
         :type username: String
@@ -113,6 +136,9 @@ class User(database.Database):
         if username == "":
             self.msg = "Username is Required"
             return False
+        if email == "":
+            self.msg = "Email is Required"
+            return False
         if password == "":
             self.msg = "Password is Required"
             return False
@@ -127,15 +153,24 @@ class User(database.Database):
         hash_object = hashlib.sha256(str(username).encode("utf-8"))
         hex = hash_object.hexdigest()
         home_folder = hex[0:30]
-        sql = "INSERT INTO user VALUES(default, '" + username + "', '" + password + "', '" + home_folder + "', '" + auth + "', " + str(admin) + ")"
+
+        basedir = os.getcwd()
+        if not os.path.exists(basedir + "/upload/" + home_folder):
+            os.makedirs(basedir + "/upload/" + home_folder)
+        if not os.path.exists(basedir + "/upload/" + home_folder + "/files"):
+            os.makedirs(basedir + "/upload/" + home_folder + "/files")
+        if not os.path.exists(basedir + "/upload/" + home_folder + "/project"):
+            os.makedirs(basedir + "/upload/" + home_folder + "/project")
+
+        sql = "INSERT INTO user VALUES(default, '" + username + "', '" + password + "', '" + email + "', '" + home_folder + "', '" + auth + "', " + str(admin) + ")"
         if self.cur.execute(sql):
-            self.gl.users.create({
-                'email': email,
-                'password': password,
-                'username': username,
-                'name': username,
-                'skip_confirmation': True
-            })
+            # self.gl.users.create({
+            #    'email': email,
+            #    'password': password,
+            #    'username': username,
+            #    'name': username,
+            #    'skip_confirmation': True
+            # })
             self.con.commit()
             self.msg = "Success"
             return True

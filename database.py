@@ -21,9 +21,9 @@ class Database:
         :rtype: void
         """
 
-        self.con = pymysql.connect(host='localhost', user='root', password='', db='auto_analytics')
+        self.con = pymysql.connect(host='localhost', user='root', password='', db='flow_analysis')
         self.cur = self.con.cursor(pymysql.cursors.DictCursor)
-        self.initGitlab()
+        # self.initGitlab()
 
     def initGitlab(self):
         """
