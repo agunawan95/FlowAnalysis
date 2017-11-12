@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Workspace</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+        <!-- Linear Icon CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='linear/style.css') }}">
+
+        <!-- Flow -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.flowchart.min.css') }}">
+
+        <!-- Intro JS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/introjs.css') }}">
+
+        <!-- Query Builder -->
+        <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/query-builder.default.min.css') }}"> -->
+
+        <!-- Form Helper -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrapformhelpers/css/bootstrap-formhelpers.min.css') }}">
+
+        <!-- Halfling -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/glyphicons-halflings.css') }}">
+
+        <!-- Bootstrap Select -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+        <!--Query Builder Package -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/examples/bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/examples/bower_components/selectize/dist/css/selectize.bootstrap3.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/dist/css/query-builder.default.css') }}" id="qb-theme">
+        <!--End of Query Builder Package -->
+    </head>
+    <body>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#"><i class="lnr lnr-rocket"></i> Workspace</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarColor02" data-step="1" data-intro="Ok, wasn't that fun?" data-position='bottom' data-scrollTo='tooltip'>
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown active">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-checkmark-circle"></i> Save</a></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-exit"></i> Exit to Project Menu</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item" id="addFile"><a href="#"><i class="lnr lnr-plus-circle"></i> Add Dataset</a></li>
+                            <li class="dropdown-item" id=""><a href="#"><i class="lnr lnr-database"></i> Add Dataset From Database Connection</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Query <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item"><a href="#" onclick="filterProcedure()"><i class="lnr lnr-funnel"></i> Filter</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="columnFilterProcedure()"><i class="lnr lnr-flag"></i> Column Filter</a></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-history"></i> Update Record</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="deleteProcedure()"><i class="lnr lnr-trash"></i> Delete Record</a></li>
+                            <li role="separator" class="dropdown-divider"></li>
+                            <li class="dropdown-item"><a href="#" onclick="appendProcedure()"><i class="lnr lnr-page-break"></i> Append Data</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="joinProcedure()"><i class="lnr lnr-pushpin"></i> Join Dataset</a></li>
+                            <li role="separator" class="dropdown-divider"></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-link"></i> Aggregation</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-calendar-full"></i> Date Extract</a></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-code"></i> String Extract</a></li>
+                            <li role="separator" class="dropdown-divider"></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-pencil"></i> Fill NA With Aggregation</a></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-pencil"></i> Fill NA With Other Column</a></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-pencil"></i> Fill NA With Value</a></li>
+                            <li role="separator" class="dropdown-divider"></li>
+                            <li class="dropdown-item"><a href="#" onclick="addModel()"><i class="lnr lnr-rocket"></i> Model Creation</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Chart <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-flag"></i> Column Filter</a></li>
+                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-funnel"></i> Filter</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav navbar-right">
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link" onclick="javascript:introJs().start();"><i class="lnr lnr-question-circle" style="color: white; font-size: 15px"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row" data-step="2" data-intro="Ok, wasn't that fun?" data-position='up' data-scrollTo='tooltip'>
+                <div class="col-sm-12">
+                    <div id="content-wrapper" style="width:100%; height: 450px; overflow: scroll; overflow-y: hidden">
+                        <div id="content" style="width:5000px; height: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <h4 class="page-header">Tools: </h4>
+                    <button class="btn btn-danger btn-sm" onclick="deleteOperation()"><i class="lnr lnr-cross"></i> Delete Selected</button>
+                    <button class="btn btn-primary btn-sm"><i class="lnr lnr-undo"></i> Execute</button>
+                    <button class="btn btn-default btn-sm" onclick="testing()"><i class="lnr lnr-star"></i> Testing</button>
+                </div>
+                <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-6">
+                          <h4 class="page-header">Error Log: </h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-right">
+                                <p>(<a href="#" class="text-info">Trace</a>)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="error-log">
+                        <p class="text-success">No Error</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+
+        <!-- Add File Modal -->
+        <div class="modal" id="addFileModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add File Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <select name="file" id="file" class="form-control" data-live-search="true">
+                            <option data-token="hr-1.csv" value="1">hr-1.csv</option>
+                            <option data-token="hr-2.csv" value="2">hr-2.csv</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="addFileProcedure()"><i class="lnr lnr-file-add"></i> Add File</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Config File Modal -->
+        <div class="modal" id="configFileModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Config File Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="config-file-id">
+                        <h3 class="text-center" id="config-file-name"></h3>
+                        <hr>
+                        <label for="file-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="file-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="buttdeleteon" class="btn btn-primary" id="config-file-submit" onclick="updateConfigFile()"><i class="lnr lnr-enter-down"></i> Save</button>
+                        <button class="btn btn-danger" onclick="deleteModule('config-file-id', 'configFileModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Data Modal -->
+        <div class="modal" id="updateDataModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Query Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="update-module-id">
+                        <div class="alert alert-warning" id="update-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="query-builder-update"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick=""><i class="lnr lnr-check"></i> Perform</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Data Modal -->
+        <div class="modal" id="deleteDataModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete Query Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="delete-module-id">
+                        <div class="alert alert-warning" id="delete-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="query-builder-delete"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="delete-module-perform" onclick="performDeleteModule()"><i class="lnr lnr-check"></i> Perform</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Data Modal -->
+        <div class="modal" id="filterDataModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete Query Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="filter-module-id">
+                        <div class="alert alert-warning" id="filter-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="query-builder-filter"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="filter-module-perform" onclick="performFilterModule()"><i class="lnr lnr-check"></i> Perform</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Join Data Modal -->
+        <div class="modal" id="joinDataModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Join Query Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="join-module-id">
+                        <div class="alert alert-warning" id="join-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make Two!
+                        </div>
+                        <div class="row">
+                          <div class="col" id="join-input-how">
+                            <div class="form-group">
+                              <label for="how">How: </label>
+                              <select class="form-control" name="how" id="how">
+                                <option value="inner">Inner</option>
+                                <option value="left">Left</option>
+                                <option value="right">Right</option>
+                                <option value="outer">Outer</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row" id="join-input-left">
+                          <div class="col">
+                            <label for="left-join-dataset">Left: </label>
+                            <select class="form-control" name="left" id="left-join-dataset">
+
+                            </select>
+                          </div>
+                          <div class="col" id="join-input-right">
+                            <label for="right-join-dataset">Right: </label>
+                            <select class="form-control" name="right" id="right-join-dataset">
+
+                            </select>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="join-module-perform" onclick="performJoinModule()"><i class="lnr lnr-check"></i> Perform</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Append File Modal -->
+        <div class="modal" id="appendDataModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Append Data Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="append-file-id">
+                        <label for="append-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="append-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="buttdeleteon" class="btn btn-primary" id="append-module-perform" onclick="performAppendModule()"><i class="lnr lnr-enter-down"></i> Save</button>
+                        <button class="btn btn-danger" onclick="deleteModule('config-file-id', 'configFileModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column Filter Modal -->
+        <div class="modal" id="columnFilterModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Column Filter Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="column-filter-id">
+                        <div class="alert alert-warning" id="column-filter-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div class="alert alert-info">
+                            Uncheck Column(s) that you want to exclude
+                        </div>
+                        <h6>Pick Column to Exclude: </h6>
+                        <hr>
+                        <div id="column-picker" style="height:250px; overflow-y: scroll"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="buttdeleteon" class="btn btn-primary" id="column-filter -module-perform" onclick="performColumnFilterModule()"><i class="lnr lnr-magic-wand"></i> Exclude</button>
+                        <button class="btn btn-danger" onclick="deleteModule('column-filter-id', 'configFileModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
+        <!-- <script src="{{ url_for('static', filename='query-builder/bower_components/jquery/dist/jquery.js') }}"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+        <script src="{{ url_for('static', filename='js/intro.js') }}"></script>
+
+        <!-- <script src="{{ url_for('static', filename='js/doT.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/jQuery.extendext.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/query-builder.min.js') }}"></script> -->
+
+        <script src="{{ url_for('static', filename='bootstrapformhelpers/js/bootstrap-formhelpers.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+        <!-- Query Builder Package -->
+        <script src="{{ url_for('static', filename='query-builder/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/bower_components/bootbox/bootbox.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/examples/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/examples/bower_components/selectize/dist/js/standalone/selectize.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/bower_components/jquery-extendext/jQuery.extendext.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/bower_components/sql-parser/browser/sql-parser.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/bower_components/doT/doT.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/bower_components/interact/interact.js') }}"></script>
+        <!-- <script src="{{ url_for('static', filename='query-builder/js/query-builder.js') }}"></script> -->
+        <!-- End of Query Builder Package -->
+
+        <!-- Query Builder Plugins -->
+        <script src="{{ url_for('static', filename='query-builder/src/main.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/defaults.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/core.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/public.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/data.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/template.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/model.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/utils.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/jquery.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/bt-checkbox/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/bt-selectpicker/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/bt-tooltip-errors/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/change-filters/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/filter-description/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/invert/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/mongodb-support/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/not-group/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/sortable/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/sql-support/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/src/plugins/unique-filter/plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='query-builder/dist/i18n/query-builder.en.js') }}"></script>
+        <!-- End of Query Builder Plugins -->
+
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+        <!-- JQuery Flow -->
+        <script src="{{ url_for('static', filename='js/jquery.flowchart.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='main-js/flow.js') }}"></script>
+        <script>
+            function testing(){
+                var data = $("#content").flowchart('getData');
+                //console.log(JSON.stringify(data))
+                //alert(JSON.stringify(data));
+                alert(JSON.stringify(metadata));
+                console.log(JSON.stringify(metadata));
+            }
+        </script>
+    </body>
+</html>
