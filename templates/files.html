@@ -1,0 +1,341 @@
+{% extends "layouts/layout-main.html" %}
+{% block content %}
+<script src="{{ url_for('static', filename='dropzone/dropzone.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='dropzone/dropzone.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='select2/select2.css') }}">
+<script src="{{ url_for('static', filename='select2/select2.js') }}"></script>
+<script>
+
+    function refresh(){
+        $.notify({
+            // options
+            icon: 'lnr lnr-undo',
+            message: 'Refreshing ...'
+        },{
+            // settings
+            type: 'success',
+            z_index: 9999
+        });
+        setTimeout(location.reload.bind(location), 800);
+    }
+
+    function delete_file(id){
+        $.confirm({
+            title: 'Are you sure?',
+            content: 'By Deleting This File All Shared User Lost Access to This File',
+            buttons: {
+                confirm: {
+                    text: 'Confirm',
+                    btnClass: 'btn-red',
+                    action: function(){
+                        $.post("/api/recycle", {"id_file": id}, function(data){
+                            if(data['err']){
+                                $.notify({
+                                    // options
+                                    icon: 'lnr lnr-warning',
+                                    message: data['msg']
+                                },{
+                                    // settings
+                                    type: 'danger'
+                                });
+                            }else{
+                               $.notify({
+                                    // options
+                                    icon: 'lnr lnr-checkmark-circle',
+                                    message: 'Success!'
+                                },{
+                                    // settings
+                                    type: 'success'
+                                });
+                                setTimeout(location.reload.bind(location), 800);
+                            }
+                        });
+                    }
+                },
+                cancel: function () {
+
+                }
+            }
+        });
+    }
+
+    function show_share_menu(id){
+        $("#shared-body").empty();
+        $("#share-user").empty();
+        $.get("/api/share/detail/" + id, {}, function(data){
+            var co = 1;
+            $.each(data, function(index, value){
+                var permission = "";
+                if(value['permission'] == 'w'){
+                    permission = "Write & Read";
+                }else{
+                    permission = "Read";
+                }
+                $("#shared-body").append('<tr><td>' + co + '</td><td>' + value['username'] + '</td><td>' + permission + '</td><td>' + value['shared_at'] + '</td><td><button class="btn btn-danger btn-sm" onclick="remove_share(' + value['id'] + ')"><i class="fa fa-remove"></i> Remove</button></td></tr>');
+                co++;
+            });
+            $.get("/api/shareable/" + id, {}, function(data){
+                $.each(data, function(index, value){
+                    $("#share-user").append('<option value="' + value['id'] + '">' + value['username'] + '</option>');
+                });
+                $("#share").val(id);
+                $("#share-modal").modal();
+            });
+        }); 
+        $('#share-file-modal').modal();
+    }
+
+    function remove_share(id){
+        $.confirm({
+            title: 'Are you sure?',
+            content: 'By doing this, targeted user cannot make access to this file',
+            buttons: {
+                confirm: {
+                    text: 'Confirm',
+                    btnClass: 'btn-red',
+                    action: function(){
+                        $.delete("/api/share/" + id, {}, function(data){
+                            if(data['err']){
+                                $.notify({
+                                    // options
+                                    icon: 'lnr lnr-warning',
+                                    message: data['msg']
+                                },{
+                                    // settings
+                                    type: 'danger',
+                                    z_index: 9999
+                                });
+                            }else{
+                               $.notify({
+                                    // options
+                                    icon: 'lnr lnr-checkmark-circle',
+                                    message: 'Success!'
+                                },{
+                                    // settings
+                                    type: 'success',
+                                    z_index: 9999
+                                });
+                                setTimeout(location.reload.bind(location), 800);
+                            }
+                        });
+                    }
+                },
+                cancel: function () {
+
+                }
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        $("#add-file").click(function(){
+            $("#add-file-modal").modal();
+        });
+        $("#search-btn").click(function(){
+            var query = $("#search").val();
+            window.location.replace("/files/s/" + query);
+        });
+        $("#share-user").select2();
+        $("#share").click(function(){
+            users = $("#share-user").val();
+            if (users != null){
+                users = users.toString();
+            }else{
+                users = "";
+            }
+            var permission = $('input[name=permission]:checked').val();
+            file = $("#share").val();
+            $.post("/api/share", {"users": users, "id_file": file, "permission": permission}, function(data){
+                if(data['err']){
+                    $.notify({
+                        // options
+                        icon: 'lnr lnr-warning',
+                        message: data['msg']
+                    },{
+                        // settings
+                        type: 'danger',
+                        z_index: 9999
+                    });
+                }else{
+                    $.notify({
+                        // options
+                        icon: 'lnr lnr-checkmark-circle',
+                        message: 'Success!'
+                    },{
+                        // settings
+                        type: 'success',
+                        z_index: 9999
+                    });
+                    setTimeout(location.reload.bind(location), 800);
+                }
+            });
+        });
+    });
+</script>
+<div class="row">
+    <div class="col-sm-6">
+        <h1><i class="lnr lnr-file-empty"></i> My Files</h1>
+    </div>
+    <div class="col-sm-6">
+        <div class="text-right">
+            <button class="btn btn-outline-primary" id="add-file"><i class="lnr lnr-plus-circle"></i> Add File</button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <div class="text-center">
+            <div class="input-group">
+                <input type="text" id="search" class="form-control" placeholder="Search">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" id="search-btn"><i class="lnr lnr-magnifier"></i></button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <hr>
+    </div>
+</div>  
+{% for file in files %}
+    {% if (loop.index - 1) % 4 == 0 %}
+        <div class="row">
+    {% endif %}
+    <div class="col-sm-3">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <div class="text-center">
+                    <a href="#">
+                        <img src="{{ url_for('static', filename='img/document.png') }}" alt="">
+                    </a>
+                    <p style="margin-top: 15px">{{ file['name'] }}</p>
+                    <hr>
+                    <a href="/api/download/{{ file['id'] }}" class="btn btn-success btn-sm"><i class="lnr lnr-download"></i></a>
+                    <button class="btn btn-warning btn-sm" onclick="show_share_menu({{ file['id'] }})"><i class="lnr lnr-smile"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="delete_file({{ file['id'] }})    "><i class="lnr lnr-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if (loop.index - 1) % 4 == 3 or loop.last %}
+        </div>
+    {% endif %}
+{% endfor %}
+<div class="row">
+    <div class="col-sm-12">
+        <hr>
+        <div class="text-center">
+            <ul class="pagination">
+                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+                
+                <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Add File(s) Modal -->
+<div class="modal" id="add-file-modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add File(s)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/api/upload" class="dropzone">
+                    <div class="fallback">
+                        <input name="file" type="file" multiple />
+                    </div>
+                </form>               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="refresh()"><i class="lnr lnr-checkmark-circle"></i> Done</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Share File Modal -->
+<div class="modal" id="share-file-modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Share File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <blockquote>
+                    <i class="lnr lnr-warning"></i> &nbsp; Sharing This File Means, Other User Have Permission to Copy This File For His/Her Project !
+                </blockquote>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <select name="share-user" id="share-user" class="js-example-basic-multiple" style="width:100%;" multiple="multiple">
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <button class="btn btn-primary btn-sm" id="share"><i class="lnr lnr-checkmark-circle"></i> &nbsp; Share to This User !</button>
+                    </div>
+                </div>
+                <hr>
+                <b>Permission: </b>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="permission" value="w" checked>
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description">Write & Read</span>
+                        </label>
+                    </div>
+                    <div class="col-sm-2">
+                        <label class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="permission" value="r">
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description">Read</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="alert alert-warning">
+                    <i class="lnr lnr-flag"></i> &nbsp; You Can Only Add User on Your Enterprise !
+                </div>
+                <hr>
+                <div style="width: 100%; height: 200px; overflow-y: scroll">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="35%">Username</th>
+                                <th width="15%">Permission</th>
+                                <th width="30%">Shared At</th>
+                                <th width="15%">Tools</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shared-body">
+
+                        </tbody>
+                    </table>
+                </div>              
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="refresh()"><i class="lnr lnr-checkmark-circle"></i> Done</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

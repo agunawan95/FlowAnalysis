@@ -183,7 +183,7 @@ class Files(database.Database):
         if users is '':
             self.msg = "No User Selected"
             return False
-        if permission is not 'r' and permission is not 'w':
+        if permission != 'r' and permission != 'w':
             permission = 'r'
         today = str(datetime.datetime.now())
         users = str(users).strip().split(",")

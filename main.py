@@ -30,6 +30,10 @@ app.secret_key = "bluebutterfly"
 
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def convert_bytes(num):
     """
@@ -147,6 +151,76 @@ def users_search(query=None):
 @app.route('/users/s/')
 def redirect_user():
     return redirect("/users")
+
+# -- Files
+
+@app.route('/files/', defaults={'page': 1})
+@app.route('/files/page/<int:page>')
+def files(page):
+    session['page'] = 'files'
+
+    user_helper = user.User()
+    file_helper = fl.Files()
+
+    if session.get("login") is None:
+        return redirect("/login")
+
+    user_file = file_helper.user_file(session['id'])
+
+    return render_template("files.html", files=user_file)
+
+@app.route('/files/s/<query>')
+def files_search(query=None):
+    err = 0
+    msg = ''
+
+    if session.get("login") is None:
+        return redirect("/login")
+
+    file_helper = fl.Files()
+
+    files = file_helper.search_file(session['id'], query)
+    return render_template("files.html", files=files)
+
+
+@app.route('/files/s/')
+def redirect_files():
+    return redirect("/files")
+
+
+@app.route('/shared/', defaults={'page': 1})
+@app.route('/shared/page/<int:page>')
+def shared_page(page):
+    session['page'] = 'files'
+
+    user_helper = user.User()
+    file_helper = fl.Files()
+
+    if session.get("login") is None:
+        return redirect("/login")
+
+    user_file = file_helper.get_shared_file(session['id'])
+
+    return render_template("shared_files.html", files=user_file)
+
+@app.route('/shared/s/<query>')
+def shared_search(query=None):
+    err = 0
+    msg = ''
+
+    if session.get("login") is None:
+        return redirect("/login")
+
+    file_helper = fl.Files()
+
+    files = file_helper.search_shared_file(session['id'], query)
+    return render_template("shared_files.html", files=files)
+
+
+@app.route('/shared/s/')
+def redirect_shared():
+    return redirect("/shared")
+
 
 # ======================================================================================
 
@@ -290,6 +364,174 @@ def update_user(id):
             return jsonify({"err": 1, "msg": enterprise_helper.error_msg()})
 
     return jsonify({"err": 0, "msg": "Success"})
+
+# -- Files
+
+@app.route("/api/upload", methods=['POST'])
+def add_files():
+    enterprise_helper = enterprise.Enterprise()
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        return jsonify({
+            "err": 1,
+            "msg": "No File Part " + str(request.files)
+        })
+    file = request.files['file']
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    if file.filename == '':
+        return jsonify({
+            "err": 1,
+            "msg": "No Selected File"
+        })
+    
+    
+
+    if file and allowed_file(file.filename):
+        file_helper = fl.Files()
+        user_helper = user.User()
+        user_helper.load_user(session['id'])
+        user_data = user_helper.get_data()
+        filename = secure_filename(file.filename)
+        basedir = os.getcwd()
+        if not os.path.exists(basedir + app.config['UPLOAD_FOLDER'] + "/" + user_data['home_folder']):
+            os.makedirs(basedir + app.config['UPLOAD_FOLDER'] + "/" + user_data['home_folder'])
+        if not os.path.exists(basedir + app.config['UPLOAD_FOLDER'] + "/" + user_data['home_folder'] + "/files"):
+            os.makedirs(basedir + app.config['UPLOAD_FOLDER'] + "/" + user_data['home_folder'] + "/files")
+        if not os.path.exists(basedir + app.config['UPLOAD_FOLDER'] + "/" + user_data['home_folder'] + "/project"):
+            os.makedirs(basedir + app.config['UPLOAD_FOLDER'] + "/" + user_data['home_folder'] + "/project")
+        target = basedir + app.config['UPLOAD_FOLDER'] + "/" + user_data['home_folder'] + "/files"
+        file.save(os.path.join(target, filename))
+        file_helper.add_file(filename, session['id'], user_data['home_folder'] + "/files/" + filename)
+        return jsonify({
+            "err": 0,
+            "msg": "Upload File Success",
+            "filename": file.filename
+        })
+    else:
+        return jsonify({
+            "err": 1,
+            "msg": "Extension not Allowed"
+        })
+
+@app.route("/api/download/<id>", methods=['GET'])
+def download(id=None):
+    if session.get("login") is None:
+        return redirect("/login")
+    if session.get("lock") is True:
+        return redirect("/lock")
+
+    file_helper = fl.Files()
+    file_helper.load_file(id)
+    data = file_helper.get_data()
+
+    # Add Security File Owner
+    if data['owner'] is not session['id']:
+        # Check if File Shared
+        if not file_helper.check_shared(session['id'], id):
+            abort(403)
+
+    basedir = os.getcwd()
+    path = basedir + app.config['UPLOAD_FOLDER'] + "/" + data['location']
+    return send_file(path, as_attachment=True)
+
+
+@app.route("/api/recycle", methods=['POST'])
+def recycle_file():
+    if session.get("login") is None:
+        return redirect("/login")
+    if session.get("lock") is True:
+        return redirect("/lock")
+
+    id_file = request.form['id_file']
+    id_admin = 0
+    if session['auth'] == 'user':
+        user_helper = user.User()
+        user_helper.load_user(session['id'])
+        user_data = user_helper.get_data()
+        id_admin = user_data['admin']
+    else:
+        id_admin = session['id']
+
+    file_helper = fl.Files()
+    if file_helper.recycle_file(id_file, id_admin):
+        return jsonify({"err": 0, "msg": "Success"})
+    else:
+        return jsonify({"err": 1, "msg": file_helper.err_msg()})
+
+
+@app.route("/api/shareable/<id_file>")
+def shareable_file(id_file=None):
+    if session.get("login") is None:
+        return redirect("/login")
+    if session.get("lock") is True:
+        return redirect("/lock")
+
+    file_helper = fl.Files()
+
+    file_helper.load_file(id_file)
+    f = file_helper.get_data()
+    if f['owner'] is not session['id']:
+        abort(403)
+
+    data = file_helper.search_shareable_user(session['id'], id_file)
+    return jsonify(data)
+
+
+@app.route("/api/share/detail/<id_file>")
+def share_detail(id_file=None):
+    if session.get("login") is None:
+        return redirect("/login")
+    if session.get("lock") is True:
+        return redirect("/lock")
+
+    file_helper = fl.Files()
+
+    file_helper.load_file(id_file)
+    f = file_helper.get_data()
+    if f['owner'] is not session['id']:
+        abort(403)
+
+    data = file_helper.share_detail(id_file)
+    return jsonify(data)
+
+@app.route("/api/share", methods=['POST'])
+def share():
+    users = request.form['users']
+    id = request.form['id_file']
+    permission = request.form['permission']
+
+    if session.get("login") is None:
+        return redirect("/login")
+    if session.get("lock") is True:
+        return redirect("/lock")
+
+    file_helper = fl.Files()
+
+    file_helper.load_file(id)
+    f = file_helper.get_data()
+    if f['owner'] is not session['id']:
+        abort(403)
+
+    if file_helper.share_file(users, id, permission):
+        return jsonify({"err": 0, "msg": "Success"})
+    else:
+        return jsonify({"err": 1, "msg": file_helper.err_msg()})
+
+@app.route("/api/share/<id>", methods=['DELETE'])
+def unshared(id=None):
+    if session.get("login") is None:
+        return redirect("/login")
+    if session.get("lock") is True:
+        return redirect("/lock")
+
+    file_helper = fl.Files()
+
+    if file_helper.unshare(id):
+        return jsonify({"err": 0, "msg": "Success"})
+    else:
+        return jsonify({"err": 1, "msg": file_helper.err_msg()})
+
 # ======================================================================================
 
 

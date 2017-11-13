@@ -1,0 +1,97 @@
+{% extends "layouts/layout-main.html" %}
+{% block content %}
+<script src="{{ url_for('static', filename='dropzone/dropzone.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='dropzone/dropzone.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='select2/select2.css') }}">
+<script src="{{ url_for('static', filename='select2/select2.js') }}"></script>
+<script>
+
+    function refresh(){
+        $.notify({
+            // options
+            icon: 'lnr lnr-undo',
+            message: 'Refreshing ...'
+        },{
+            // settings
+            type: 'success',
+            z_index: 9999
+        });
+        setTimeout(location.reload.bind(location), 800);
+    }
+
+    $(document).ready(function(){
+        $("#search-btn").click(function(){
+            var query = $("#search").val();
+            window.location.replace("/shared/s/" + query);
+        });
+    });
+</script>
+<div class="row">
+    <div class="col-sm-6">
+        <h1><i class="lnr lnr-link"></i> Shared With Me</h1>
+    </div>
+    <div class="col-sm-6">
+        <div class="text-right">
+            
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <div class="text-center">
+            <div class="input-group">
+                <input type="text" id="search" class="form-control" placeholder="Search">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" id="search-btn"><i class="lnr lnr-magnifier"></i></button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <hr>
+    </div>
+</div>  
+{% for file in files %}
+    {% if (loop.index - 1) % 4 == 0 %}
+        <div class="row">
+    {% endif %}
+    <div class="col-sm-3">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <div class="text-center">
+                    <a href="#">
+                        <img src="{{ url_for('static', filename='img/document.png') }}" alt="">
+                    </a>
+                    <p style="margin-top: 15px">{{ file['name'] }}</p>
+                    <hr>
+                    <a href="/api/download/{{ file['id'] }}" class="btn btn-success btn-sm"><i class="lnr lnr-download"></i> Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if (loop.index - 1) % 4 == 3 or loop.last %}
+        </div>
+    {% endif %}
+{% endfor %}
+<div class="row">
+    <div class="col-sm-12">
+        <hr>
+        <div class="text-center">
+            <ul class="pagination">
+                <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+                
+                <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

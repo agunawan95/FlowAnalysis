@@ -1,4 +1,5 @@
 import database
+import os
 
 
 class Enterprise(database.Database):
@@ -7,6 +8,7 @@ class Enterprise(database.Database):
     """
 
     msg = ""
+    data = None
 
     def add_enterprise(self, name, address, email, phone, filesize, user_limit, admin):
 
@@ -85,4 +87,24 @@ class Enterprise(database.Database):
         :rtype: String
         """
 
-        return self.msg
+    def load(self, id):
+        sql = "SELECT * FROM enterprise WHERE admin = " + str(id)
+        self.cur.execute(sql)
+        self.data = self.cur.fetchone()
+
+    def check_file(self, admin, size):
+        sql = "SELECT * FROM user WHERE admin = " + str(id) + " OR id = " + str(id)
+        self.cur.execute(sql)
+        total_size = 0
+        data = self.cur.fetchall()
+        for user in data:
+            query = "SELECT * FROM files WHERE owner = " + str(user['id'])
+            self.cur.execute(sql)
+            files = self.cur.fetchall()
+            for file in files:
+                file_path = 'upload/' + file['location'] 
+                if os.path.isfile(file_path):
+                    file_info = os.stat(file_path)
+                    total_size += int(file_info.st_size)
+        limit = int(self.data['filesize_limit']) * 1024 * 1024 * 1024
+        return total_size <= limit
