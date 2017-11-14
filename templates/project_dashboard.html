@@ -1,219 +1,187 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <title>Workspace</title>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-        <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
-
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-
-        <!-- Linear Icon CSS -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='linear/style.css') }}">
-
-        <!-- Intro JS -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/introjs.css') }}">
-    </head>
-    <body>
-
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="#"><i class="lnr lnr-rocket"></i> Workspace</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarColor02" data-step="1" data-intro="Ok, wasn't that fun?" data-position='bottom' data-scrollTo='tooltip'>
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item dropdown active">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-checkmark-circle"></i> Save</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-exit"></i> Exit to Project Menu</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item" onclick="addFile()"><a href="#"><i class="lnr lnr-plus-circle"></i> Add Dataset</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Query <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-plus-circle"></i> Add Record</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-history"></i> Update Record</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-trash"></i> Delete Record</a></li>
-                            <li role="separator" class="dropdown-divider"></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-page-break"></i> Append Data</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-pushpin"></i> Join Dataset</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Filter <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-flag"></i> Column Filter</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-funnel"></i> Filter</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Chart <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-flag"></i> Column Filter</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-funnel"></i> Filter</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Model <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-rocket"></i> Model Creation</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-star"></i> Model Recommender</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="navbar-nav navbar-right">
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link" onclick="javascript:introJs().start();"><i class="lnr lnr-question-circle" style="color: white; font-size: 15px"></i></a>
-                    </li>
-                </ul>
+{% extends "layouts/layout-main.html" %}
+{% block content %}
+<script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+<div class="row"><div class="col"><hr></div></div>
+<div class="row">
+    <div class="col">
+        <h1><i class="lnr lnr-briefcase"></i> Project Dashboard</h1>
+    </div>
+    <div class="col">
+        <div class="text-right">
+            <div class="btn btn-danger"><i class="lnr lnr-trash"></i> Delete Project</div>
+            <div class="btn btn-info"><i class="lnr lnr-rocket"></i> Workspace</div>
+        </div>
+    </div>
+</div>
+<div class="row"><div class="col"><hr></div></div>
+<div class="row">
+    <div class="col">
+        <br>
+        <div class="text-center">
+            <h3>HR Left Predictions</h3>
+            <p><i>Start At: 1 Januray 2017</i></p>
+        </div>
+        <br>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="row">
+            <div class="col">
+                <h4>Project Heatmap</h4>
             </div>
-        </nav>
-
-        <div class="container">
-            <div class="row"><div class="col"><hr></div></div>
-            <div class="row">
-                <div class="col">
-                    <h1><i class="lnr lnr-briefcase"></i> Project Dashboard</h1>
-                </div>
-                <div class="col">
-                    <div class="text-right">
-                        <div class="btn btn-danger"><i class="lnr lnr-trash"></i> Delete Project</div>
-                        <div class="btn btn-success"><i class="lnr lnr-rocket"></i> Workspace</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row"><div class="col"><hr></div></div>
-            <div class="row">
-                <div class="col">
-                    <div class="card border-primary">
-                        <div class="card-body">
-                            <p><strong style="font-weight: bold">Project Name: </strong> Human Resource Left Prediction</p>
-                            <p><strong style="font-weight: bold">Last Edited: </strong> 1 January 2017</p>
-                            <p><strong style="font-weight: bold">Last Edited By: </strong> Andre Gunawan</p>
-                            <hr>
-                            <div class="text-right"><button class="btn btn-info btn-sm"><i class="lnr lnr-pencil"></i> Edit</button></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card text-white bg-primary">
-                        <div class="card-body">
-                            <h5 class="text-white"><i class="lnr lnr-history"></i> Logs <small>(<a href="#" class="text-info">More</a>)</small> </h5>
-                            <hr style="border-top: 1px solid white">
-                            <p class="text-white">[2017/01/01] Andre Edited This Project</p>
-                            <p class="text-white">[2017/01/01] Andre Edited This Project</p>
-                            <p class="text-white">[2017/01/01] Andre Edited This Project</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <br>
-                    <div>
-
-                      <!-- Nav tabs -->
-                      <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item"><a href="#charts" class="nav-link active" aria-controls="charts" role="tab" data-toggle="tab">Charts</a></li>
-                        <li class="nav-item"><a href="#models" class="nav-link" aria-controls="models" role="tab" data-toggle="tab">Models</a></li>
-                      </ul>
-
-                      <!-- Tab panes -->
-                      <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="charts">
-                            <div class="row">
-                                <div class="col">
-                                    <br>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="card border-primary">
-                                        <img src="http://placehold.it/300x200" alt="" class="">
-                                        <div class="card-body">
-                                            <div class="text-right">
-                                                <button class="btn btn-success btn-sm"><i class="lnr lnr-download"></i></button>
-                                                <button class="btn btn-danger btn-sm"><i class="lnr lnr-trash"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-
-                                </div>
-                                <div class="col">
-
-                                </div>
-                            </div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane" id="models">
-                            <div class="row">
-                                <div class="col">
-                                    <br>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <div class="card border-primary">
-                                        <div class="card-body">
-                                            <div class="text-center">
-                                                <p>Model #1</p>
-                                                <img src="{{ url_for('static', filename='img/cube.png') }}" alt="">
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col">
-                                                    <p>1 January 2017</p>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="text-right">
-                                                        <button class="btn btn-success btn-sm"><i class="lnr lnr-magnifier"></i></button>
-                                                        <button class="btn btn-danger btn-sm"><i class="lnr lnr-trash"></i></button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    
-                                </div>
-                                <div class="col">
-                                    
-                                </div>
-                            </div>
-                        </div>
-                      </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <hr>
+            <div class="col">
+                <div class="text-right">
+                    <button class="btn btn-primary btn-sm" id="prev-cal"><i class="lnr lnr-chevron-left"></i></button>
+                    <button class="btn btn-primary btn-sm" id="next-cal"><i class="lnr lnr-chevron-right"></i></button>
                 </div>
             </div>
         </div>
-        <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-        <script src="{{ url_for('static', filename='js/intro.js') }}"></script>
+        <hr>
+        <div id="cal"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <br>
+        <div>
 
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item"><a href="#charts" class="nav-link active" aria-controls="charts" role="tab" data-toggle="tab">Charts <span class="badge badge-primary">1</span></a></li>
+            <li class="nav-item"><a href="#models" class="nav-link" aria-controls="models" role="tab" data-toggle="tab">Models <span class="badge badge-primary">1</span></a></li>
+            <li class="nav-item"><a href="#merge" class="nav-link" aria-controls="merge" role="tab" data-toggle="tab">Merge Request <span class="badge badge-primary">1</span></a></li>
+            </ul>
 
-    </body>
-</html>
+            <!-- Tab panes -->
+            <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="charts">
+                <div class="row">
+                    <div class="col">
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card border-primary">
+                            <img src="http://placehold.it/300x200" alt="" class="">
+                            <div class="card-body">
+                                <div class="text-right">
+                                    <button class="btn btn-success btn-sm"><i class="lnr lnr-download"></i></button>
+                                    <button class="btn btn-danger btn-sm"><i class="lnr lnr-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+
+                    </div>
+                    <div class="col">
+
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="models">
+                <div class="row">
+                    <div class="col">
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card border-primary">
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <p>Model #1</p>
+                                    <img src="{{ url_for('static', filename='img/cube.png') }}" alt="">
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col">
+                                        <p>1 January 2017</p>
+                                    </div>
+                                    <div class="col">
+                                        <div class="text-right">
+                                            <button class="btn btn-success btn-sm"><i class="lnr lnr-magnifier"></i></button>
+                                            <button class="btn btn-danger btn-sm"><i class="lnr lnr-trash"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        
+                    </div>
+                    <div class="col">
+                        
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="merge">
+                <div class="row">
+                    <div class="col">
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th width="5%">#</th>
+                                    <th width="30%">From</th>
+                                    <th width="30%">Date</th>
+                                    <th width="35%">Tools</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>YC (<a href="#">Detail</a>)</td>
+                                    <td>02 February 2017</td>
+                                    <td>
+                                        <button class="btn btn-success"><i class="lnr lnr-checkmark-circle"></i> Accept</button>
+                                        <button class="btn btn-danger"><i class="lnr lnr-trash"></i> Reject</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col">
+                        
+                    </div>
+                    <div class="col">
+                        
+                    </div>
+                </div>
+            </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <hr>
+    </div>
+</div>
+<script>
+    var cal = new CalHeatMap();
+    cal.init({
+        itemSelector: "#cal",
+        domain: "day",
+        data: "http://cal-heatmap.com/datas-years.json",
+        start: new Date(2000, 0),
+        cellSize: 9,
+        range: 20,
+        previousSelector: "#prev-cal",
+        nextSelector: "#next-cal",
+
+        legend: [2, 4, 6, 8]
+    });
+</script>
+
+{% endblock %}

@@ -109,6 +109,12 @@ def login():
             msg = user_helper.err_msg()
     return render_template("login.html", err=err, msg=msg)
 
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
+
 # -- Users
 
 
@@ -221,6 +227,49 @@ def shared_search(query=None):
 def redirect_shared():
     return redirect("/shared")
 
+
+@app.route("/recycle")
+def recycle():
+    if session.get("login") is None:
+        return redirect("/login")
+    if session.get("auth") is "user":
+        return redirect("/")
+
+    file_helper = fl.Files()
+    files = file_helper.get_recycle_bin(session['id'])
+
+    return render_template("recycle.html", files=files)
+
+@app.route('/recycle/s/<query>')
+def recycle_search(query=None):
+    err = 0
+    msg = ''
+
+    if session.get("login") is None:
+        return redirect("/login")
+
+    file_helper = fl.Files()
+
+    files = file_helper.search_recycle(session['id'], query)
+    return render_template("recycle.html", files=files)
+
+
+@app.route('/recycle/s/')
+def redirect_recycle():
+    return redirect("/recycle")
+
+# -- Projects
+@app.route("/projects")
+def projects():
+    if session.get("login") is None:
+        return redirect("/login")
+    return render_template("projects.html")
+
+@app.route("/projects/<id>")
+def project_dashboard(id):
+    if session.get("login") is None:
+        return redirect("/login")
+    return render_template("project_dashboard.html")
 
 # ======================================================================================
 
@@ -528,6 +577,36 @@ def unshared(id=None):
     file_helper = fl.Files()
 
     if file_helper.unshare(id):
+        return jsonify({"err": 0, "msg": "Success"})
+    else:
+        return jsonify({"err": 1, "msg": file_helper.err_msg()})
+
+@app.route("/api/file/<id>", methods=['DELETE'])
+def file_api(id=None):
+    if session.get("login") is None:
+        return redirect("/login")
+    if session.get("lock") is True:
+        return redirect("/lock")
+
+    file_helper = fl.Files()
+    if request.method == 'DELETE':
+        file_helper.load_file(id)
+        if file_helper.delete_file(app.config['UPLOAD_FOLDER']):
+            return jsonify({"err": 0, "msg": "Success"})
+        else:
+            return jsonify({"err": 0, "msg": file_helper.err_msg()})
+
+@app.route("/api/recycle/<id_recycle>", methods=['DELETE'])
+def restore_file(id_recycle=None):
+    if session.get("login") is None:
+        return redirect("/login")
+    if session.get("lock") is True:
+        return redirect("/lock")
+    if session.get("auth") is "user":
+        return redirect("/")
+
+    file_helper = fl.Files()
+    if file_helper.restore_file(id_recycle):
         return jsonify({"err": 0, "msg": "Success"})
     else:
         return jsonify({"err": 1, "msg": file_helper.err_msg()})

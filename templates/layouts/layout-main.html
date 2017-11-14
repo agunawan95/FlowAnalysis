@@ -88,16 +88,16 @@
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="lnr lnr-apartment"></i> Enterprise <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item"><a href="/users"><i class="lnr lnr-users"></i> Enterprise User</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-trash"></i> Enterprise Recycle Bin</a></li>
+                            <li class="dropdown-item"><a href="/recycle"><i class="lnr lnr-trash"></i> Enterprise Recycle Bin</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown {% if session['page'] == 'project' %} active {% endif %}">
-                        <a href="/" class="nav-link"><i class="lnr lnr-rocket"></i> My Project</a>
+                        <a href="/projects" class="nav-link"><i class="lnr lnr-rocket"></i> My Project</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav navbar-right">
                     <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="lnr lnr-exit"></i> Logout</a>
+                        <a href="/logout" class="nav-link"><i class="lnr lnr-exit"></i> Logout</a>
                     </li>
                 </ul>
             </div>
@@ -115,5 +115,10 @@
         <script src="{{ url_for('static', filename='jquery-confirm/jquery-confirm.min.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='notify/bootstrap-notify.js') }}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='notify/bootstrap-notify.min.js') }}"></script>
+        <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+        </script>
     </body>
 </html>

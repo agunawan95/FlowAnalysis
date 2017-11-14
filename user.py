@@ -162,7 +162,7 @@ class User(database.Database):
         if not os.path.exists(basedir + "/upload/" + home_folder + "/project"):
             os.makedirs(basedir + "/upload/" + home_folder + "/project")
 
-        sql = "INSERT INTO user VALUES(default, '" + username + "', '" + password + "', '" + email + "', '" + home_folder + "', '" + auth + "', " + str(admin) + ")"
+        sql = "INSERT INTO user VALUES(default, '" + username + "', '" + email + "', '" + password + "', '" + home_folder + "', '" + auth + "', " + str(admin) + ")"
         if self.cur.execute(sql):
             # self.gl.users.create({
             #    'email': email,

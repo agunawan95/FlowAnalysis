@@ -1,5 +1,10 @@
 {% extends "layouts/layout-main.html" %}
 {% block content %}
+<script>
+    function show_merge_request(){
+        $("#request-merge").modal();
+    }
+</script>
 <div class="row">
     <div class="col">
         <h1><i class="lnr lnr-home"></i> Home</h1>
@@ -33,7 +38,7 @@
         <div class="card text-white bg-dark">
             <div class="card-body">
                 <div class="text-center">
-                    <a href="#">
+                    <a href="/files">
                         <img src="{{ url_for('static', filename='img/folder.png') }}" alt="">
                     </a>
                     <hr>
@@ -59,11 +64,11 @@
         <div class="card text-white bg-warning">
             <div class="card-body">
                 <div class="text-center">
-                    <a href="#">
-                        <img src="{{ url_for('static', filename='img/man.png') }}" alt="" width="64" height="64">
+                    <a href="#" onclick="show_merge_request()">
+                        <img src="{{ url_for('static', filename='img/notification.png') }}" alt="" width="64" height="64">
                     </a>
                     <hr>
-                    <h5 class="text-white">Change Profile</h5>
+                    <h5 class="text-white">5 Merge Request</h5>
                 </div>
             </div>
         </div>
@@ -84,10 +89,44 @@
         <h5><i class="lnr lnr-coffee-cup"></i> Latest Project</h5>
         <hr>
         <div class="list-group">
-            <a href="#" class="list-group-item  list-group-item-action active">Cras justo odio</a>
-            <a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
-            <a href="#" class="list-group-item list-group-item-action disabled">Morbi leo risus</a>
+            <a href="#" class="list-group-item  list-group-item-action">HR Left Prediiction</a>
+            <a href="#" class="list-group-item list-group-item-action">Bakery Demand Analysis</a>
+            <a href="#" class="list-group-item list-group-item-action">West Nile Predictions</a>
         </div>
     </div>
 </div>
+
+<!-- Request Merge Modal -->
+<div class="modal" id="request-merge">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Request Merge</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-1">1</div>
+                        <div class="col-sm-8">YC Request Merge on Project: HR predictions</div>
+                        <div class="col-sm-3">
+                            <a href="#" class="btn btn-success btn-sm">Go to Project</a>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-1">1</div>
+                        <div class="col-sm-8">YC Request Merge on Project: HR predictions</div>
+                        <div class="col-sm-3">
+                            <a href="#" class="btn btn-success btn-sm">Go to Project</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
