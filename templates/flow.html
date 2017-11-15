@@ -32,6 +32,9 @@
         <!-- Bootstrap Select -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
 
+        <!-- Multiselect -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='select2/select2.css') }}">
+
         <!--Query Builder Package -->
         <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}">
@@ -75,7 +78,7 @@
                             <li class="dropdown-item"><a href="#" onclick="appendProcedure()"><i class="lnr lnr-page-break"></i> Append Data</a></li>
                             <li class="dropdown-item"><a href="#" onclick="joinProcedure()"><i class="lnr lnr-pushpin"></i> Join Dataset</a></li>
                             <li role="separator" class="dropdown-divider"></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-link"></i> Aggregation</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="aggregateProcedure()"><i class="lnr lnr-link"></i> Aggregation</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -382,6 +385,52 @@
             </div>
         </div>
 
+        <!-- Query Agregate Modal -->
+        <div class="modal" id="queryAggregateModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Aggregation Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="columns-group-by">Group By: </label>
+                            <select name="columns-group-by" id="columns-group-by" class="js-example-basic-multiple" style="width:100%;" multiple="multiple"></select>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="colums-aggregate">Target Column: </label>
+                                    <select name="column-aggregate" id="column-aggregate" class="form-control"></select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="aggregate-function">Function: </label>
+                                    <select name="function" id="aggregate-function" class="form-control">
+                                        <option value="sum">Sum</option>
+                                        <option value="count">Count</option>
+                                        <option value="std">Standart Deviation</option>
+                                        <option value="avg">Average</option>
+                                        <option value="max">Max</option>
+                                        <option value="min">Min</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="buttdeleteon" class="btn btn-primary" id="column-filter -module-perform" onclick="performColumnFilterModule()"><i class="lnr lnr-magic-wand"></i> Exclude</button>
+                        <button class="btn btn-danger" onclick="deleteModule('column-filter-id', 'configFileModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
@@ -435,6 +484,7 @@
         <!-- End of Query Builder Plugins -->
 
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='select2/select2.js') }}"></script>
 
         <!-- JQuery Flow -->
         <script src="{{ url_for('static', filename='js/jquery.flowchart.min.js') }}"></script>

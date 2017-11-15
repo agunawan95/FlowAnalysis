@@ -22,6 +22,8 @@ $(document).ready(function(){
                 showAppendData(operatorId);
             }else if(metadata[operatorId]['type'] == 'process:cfilter'){
                 showColumnFilter(operatorId);
+            }else if(metadata[operatorId]['type'] == 'process:aggregate'){
+                showAggregate(operatorId);
             }
             return true;
         },
@@ -47,7 +49,7 @@ $(document).ready(function(){
               });
               metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
               metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
-            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter'){
+            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate'){
                 metadata[linkData['toOperator']]['input_shape'] = metadata[linkData['fromOperator']]['shape']; 
             }
             return true;
@@ -87,6 +89,7 @@ $(document).ready(function(){
             deleteOperation();
         }
     });
+    $("#columns-group-by").select2();
 });
 
 
@@ -283,6 +286,19 @@ function columnFilterProcedure(){
     metadata[id] = data;
 }
 
+function aggregateProcedure(){
+    var id = addOperatorSingleInput('Query Aggregation Module');
+    var data = {
+        id_operation: id,
+        type: 'process:aggregate',
+        name: 'aggregate',
+        input_shape: [],
+        shape: {},
+        link: []
+    };
+    metadata[id] = data;
+}
+
 function deleteModule(id_container, id_modal){
     var id = $("#" + id_container).val();
     $('#content').flowchart('deleteOperator', id);
@@ -404,6 +420,14 @@ function showColumnFilter(id){
         $("#column-filter-module-perform").hide();
     }
     $("#columnFilterModal").modal();
+}
+
+function showAggregate(id){
+    $.each(metadata[id]['input_shape'], function(index, value){
+        $("#columns-group-by").append('<option value="' + index + '">' + index + '</option>');
+        $("#column-aggregate").append('<option value="' + index + '">' + index + '</option>');
+    });
+    $("#queryAggregateModal").modal();
 }
 
 function remakeOutputFeet(id, output_feet){
