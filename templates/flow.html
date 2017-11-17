@@ -84,12 +84,11 @@
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-calendar-full"></i> Date Extract</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-code"></i> String Extract</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="stringExtractProcedure()"><i class="lnr lnr-code"></i> String Extract</a></li>
                             <li role="separator" class="dropdown-divider"></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-pencil"></i> Fill NA With Aggregation</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-pencil"></i> Fill NA With Other Column</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-pencil"></i> Fill NA With Value</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="fillnaAggregateProcedure()"><i class="lnr lnr-pencil"></i> Fill NA With Aggregation</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="fillnaOCProcedure()"><i class="lnr lnr-pencil"></i> Fill NA With Other Column</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="fillnaValueProcedure()"><i class="lnr lnr-pencil"></i> Fill NA With Value</a></li>
                             <li role="separator" class="dropdown-divider"></li>
                             <li class="dropdown-item"><a href="#" onclick="addModel()"><i class="lnr lnr-rocket"></i> Model Creation</a></li>
                         </ul>
@@ -164,6 +163,8 @@
                         <select name="file" id="file" class="form-control" data-live-search="true">
                             <option data-token="hr-1.csv" value="1">hr-1.csv</option>
                             <option data-token="hr-2.csv" value="2">hr-2.csv</option>
+                            <option data-token="west_nile.csv" value="3">west_nile.csv</option>
+                            <option data-token="west_nile_weather.csv" value="4">west_nile_weather.csv</option>
                         </select>
                     </div>
                     <div class="modal-footer">
@@ -243,9 +244,15 @@
                             This Module Doesn't Have Input Flow! Please Make One!
                         </div>
                         <div id="query-builder-delete"></div>
+                        <hr>
+                        <label for="delete-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="delete-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="delete-module-perform" onclick="performDeleteModule()"><i class="lnr lnr-check"></i> Perform</button>
+                        <button class="btn btn-danger" onclick="deleteModule('delete-module-id', 'deleteDataModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -268,9 +275,15 @@
                             This Module Doesn't Have Input Flow! Please Make One!
                         </div>
                         <div id="query-builder-filter"></div>
+                        <hr>
+                        <label for="filter-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="filter-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="filter-module-perform" onclick="performFilterModule()"><i class="lnr lnr-check"></i> Perform</button>
+                        <button class="btn btn-danger" onclick="deleteModule('filter-module-id', 'filterDataModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -319,9 +332,15 @@
                             </select>
                           </div>
                         </div>
+                        <hr>
+                        <label for="join-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="join-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="join-module-perform" onclick="performJoinModule()"><i class="lnr lnr-check"></i> Perform</button>
+                        <button class="btn btn-danger" onclick="deleteModule('join-module-id', 'joinDataModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -347,7 +366,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="buttdeleteon" class="btn btn-primary" id="append-module-perform" onclick="performAppendModule()"><i class="lnr lnr-enter-down"></i> Save</button>
-                        <button class="btn btn-danger" onclick="deleteModule('config-file-id', 'configFileModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button class="btn btn-danger" onclick="deleteModule('append-file-id', 'appendDataModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -375,10 +394,15 @@
                         <h6>Pick Column to Exclude: </h6>
                         <hr>
                         <div id="column-picker" style="height:250px; overflow-y: scroll"></div>
+                        <hr>
+                        <label for="column-filter-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="column-filter-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="buttdeleteon" class="btn btn-primary" id="column-filter -module-perform" onclick="performColumnFilterModule()"><i class="lnr lnr-magic-wand"></i> Exclude</button>
-                        <button class="btn btn-danger" onclick="deleteModule('column-filter-id', 'configFileModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-primary" id="column-filter-module-perform" onclick="performColumnFilterModule()"><i class="lnr lnr-magic-wand"></i> Exclude</button>
+                        <button class="btn btn-danger" onclick="deleteModule('column-filter-id', 'columnFilterModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -396,35 +420,213 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label for="columns-group-by">Group By: </label>
-                            <select name="columns-group-by" id="columns-group-by" class="js-example-basic-multiple" style="width:100%;" multiple="multiple"></select>
+                        <input type="hidden" id="aggregate-id">
+                        <div class="alert alert-warning" id="aggregate-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
                         </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="colums-aggregate">Target Column: </label>
-                                    <select name="column-aggregate" id="column-aggregate" class="form-control"></select>
+                        <div id="aggregate-body">
+                            <div class="form-group">
+                                <label for="columns-group-by">Group By: </label>
+                                <select name="columns-group-by" id="columns-group-by" class="js-example-basic-multiple" style="width:100%;" multiple="multiple"></select>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="colums-aggregate">Target Column: </label>
+                                        <select name="column-aggregate" id="column-aggregate" class="form-control"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="aggregate-function">Function: </label>
+                                        <select name="function" id="aggregate-function" class="form-control">
+                                            <option value="sum">Sum</option>
+                                            <option value="count">Count</option>
+                                            <option value="std">Standart Deviation</option>
+                                            <option value="avg">Average</option>
+                                            <option value="max">Max</option>
+                                            <option value="min">Min</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="aggregate-function">Function: </label>
-                                    <select name="function" id="aggregate-function" class="form-control">
-                                        <option value="sum">Sum</option>
-                                        <option value="count">Count</option>
-                                        <option value="std">Standart Deviation</option>
-                                        <option value="avg">Average</option>
-                                        <option value="max">Max</option>
-                                        <option value="min">Min</option>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
+                        <hr>
+                        <label for="aggregate-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="aggregate-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="buttdeleteon" class="btn btn-primary" id="column-filter -module-perform" onclick="performColumnFilterModule()"><i class="lnr lnr-magic-wand"></i> Exclude</button>
-                        <button class="btn btn-danger" onclick="deleteModule('column-filter-id', 'configFileModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="buttdeleteon" class="btn btn-primary" id="aggregate-module-perform" onclick="performAggregateModule()"><i class="lnr lnr-magic-wand"></i> Perform</button>
+                        <button class="btn btn-danger" onclick="deleteModule('aggregate-id', 'queryAggregateModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- String Extractor Modal -->
+        <div class="modal" id="stringExtractModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">String Extract Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="string-extract-id">
+                        <div class="alert alert-warning" id="string-extract-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="extract-body">
+                            <div class="form-group">
+                                <label for="string-extract-column">Target Column</label>
+                                <select name="string-extract-column" id="string-extract-column" class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="delimiter">Delimiter: </label>
+                                <input type="text" id="delimiter" name="delimiter" class="form-control">
+                            </div>
+                        </div>
+                        <hr>
+                        <label for="string-extract-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="string-extract-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="string-extract-module-perform" onclick="stringExtractPerform()"><i class="lnr lnr-magic-wand"></i> Extract</button>
+                        <button class="btn btn-danger" onclick="deleteModule('string-extract-id', 'stringExtractModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fill NA Aggregate Modal -->
+        <div class="modal" id="fillnaAggregateModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Fill NA Aggregate Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="fillna-aggregate-id">
+                        <div class="alert alert-warning" id="fillna-aggregate-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="fillna-aggregate-body">
+                            <div class="form-group">
+                                <label for="fillna-aggregate-column">Target Column</label>
+                                <select name="fillna-aggregate-column" id="fillna-aggregate-column" class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="fillna-aggregate-function">Function: </label>
+                                <select name="function" id="fillna-aggregate-function" class="form-control">
+                                    <option value="sum">Sum</option>
+                                    <option value="count">Count</option>
+                                    <option value="std">Standart Deviation</option>
+                                    <option value="avg">Average</option>
+                                    <option value="max">Max</option>
+                                    <option value="min">Min</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                        <label for="fillna-aggregate-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="fillna-aggregate-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="fillna-aggregate-module-perform" onclick="performFillnaAggregateModule()"><i class="lnr lnr-pencil"></i> Change</button>
+                        <button class="btn btn-danger" onclick="deleteModule('fillna-aggregate-id', 'fillnaAggregateModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fill NA OC Modal -->
+        <div class="modal" id="fillnaOCModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Fill NA With Other Column Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="fillna-oc-id">
+                        <div class="alert alert-warning" id="fillna-oc-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="fillna-oc-body">
+                            <div class="form-group">
+                                <label for="fillna-oc-column">Target Column</label>
+                                <select name="fillna-oc-column" id="fillna-oc-column" class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="fillna-oc-ocolumn">Other Column</label>
+                                <select name="fillna-oc-ocolumn" id="fillna-oc-ocolumn" class="form-control"></select>
+                            </div>
+                        </div>
+                        <hr>
+                        <label for="fillna-oc-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="fillna-oc-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="fillna-oc-module-perform" onclick="performFillnaOCModule()"><i class="lnr lnr-pencil"></i> Change</button>
+                        <button class="btn btn-danger" onclick="deleteModule('fillna-oc-id', 'fillnaOCModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fill NA Value Modal -->
+        <div class="modal" id="fillnaValueModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Fill NA With Value Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="fillna-value-id">
+                        <div class="alert alert-warning" id="fillna-value-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="fillna-value-body">
+                            <div class="form-group">
+                                <label for="fillna-value-column">Target Column</label>
+                                <select name="fillna-value-column" id="fillna-value-column" class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="fillna-value-val">Desired Value: </label>
+                                <input type="text" name="fillna-value-val" id="fillna-value-val" class="form-control" placeholder="Value">
+                            </div>
+                        </div>
+                        <hr>
+                        <label for="fillna-value-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="fillna-value-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="fillna-value-module-perform" onclick="performFillnaValueModule()"><i class="lnr lnr-pencil"></i> Change</button>
+                        <button class="btn btn-danger" onclick="deleteModule('fillna-value-id', 'fillnaValueModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>

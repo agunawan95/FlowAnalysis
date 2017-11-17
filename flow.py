@@ -19,7 +19,16 @@ def project():
 
 @app.route("/api/file/metadata/<id>")
 def file_metadata(id=None):
-    df = pd.read_csv('dummy/hr-1.csv')
+    df = None
+    id = int(id)
+    if id == 1:
+        df = pd.read_csv('dummy/hr-1.csv')
+    elif id == 2:
+        df = pd.read_csv('dummy/hr-2.csv')
+    elif id == 3:
+        df = pd.read_csv('dummy/west_nile.csv')
+    elif id == 4:
+        df = pd.read_csv('dummy/west_nile_weather.csv')
     return jsonify(df.dtypes.apply(lambda x: x.name).to_dict())
 
 
