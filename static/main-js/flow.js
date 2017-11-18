@@ -32,6 +32,10 @@ $(document).ready(function(){
                 showFillnaOC(operatorId);
             }else if(metadata[operatorId]['type'] == 'process:fillna-value'){
                 showFillnaValue(operatorId);
+            }else if(metadata[operatorId]['type'] == 'process:formula'){
+                showFormulaModule(operatorId);
+            }else if (metadata[operatorId]['type'] == 'process:factorize'){
+                showFactorizeModule(operatorId);
             }
             return true;
         },
@@ -56,8 +60,8 @@ $(document).ready(function(){
                 'link_id': linkId
               });
               metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
-              metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
-            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value'){
+              // metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
+            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize'){
                 metadata[linkData['toOperator']]['input_shape'] = metadata[linkData['fromOperator']]['shape']; 
             }
             return true;
@@ -86,7 +90,7 @@ $(document).ready(function(){
                 if(metadata[link['toOperator']]['type'] == 'process:join'){
                     link['toOperator']['metadata'] = {};
                 }
-            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value'){
+            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize'){
                 metadata[link['toOperator']]['input_shape'] = {};
             }
             metadata[link['toOperator']]['shape'] = {};
@@ -325,8 +329,8 @@ function stringExtractProcedure(){
     var data = {
         id_operation: id,
         type: 'process:sextract',
-        name: 'aggregate',
-        input_shape: [],
+        name: 'string-extract',
+        input_shape: {},
         delimiter: "",
         target: "",
         shape: {},
@@ -374,6 +378,34 @@ function fillnaValueProcedure(){
         input_shape: [],
         value: "",
         target: "",
+        shape: {},
+        link: []
+    };
+    metadata[id] = data;
+}
+
+function formulaProcedure(){
+    var id = addOperatorSingleInput('Formula Module');
+    var data = {
+        id_operation: id,
+        type: 'process:formula',
+        name: 'formula',
+        input_shape: {},
+        formula: "",
+        shape: {},
+        link: []
+    };
+    metadata[id] = data;
+}
+
+function factorizeProcedure(){
+    var id = addOperatorSingleInput('Factorize Module');
+    var data = {
+        id_operation: id,
+        type: 'process:factorize',
+        name: 'factorize',
+        input_shape: {},
+        taget: "",
         shape: {},
         link: []
     };
@@ -680,6 +712,78 @@ function showFillnaValue(id){
     $("#fillnaValueModal").modal();
 }
 
+function showFormulaModule(id){
+    $("#formula-id").val(id);
+    
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        var tag = [];
+        $.each(metadata[id]['input_shape'], function(index, value){
+            tag.push(index);
+        });
+        var availableTags = tag;
+          function split( val ) {
+            return val.split( /[+, -, *, /]\s*/ );
+          }
+          function extractLast( term ) {
+            return split( term ).pop();
+          }
+       
+          $( "#formula-input" )
+            .on( "keydown", function( event ) {
+              if ( event.keyCode === $.ui.keyCode.TAB &&  $( this ).autocomplete( "instance" ).menu.active ) {
+                event.preventDefault();
+              }
+            })
+            .autocomplete({
+              minLength: 0,
+              source: function( request, response ) {
+                response( $.ui.autocomplete.filter(
+                  availableTags, extractLast( request.term ) ) );
+              },
+              focus: function() {
+                return false;
+              },
+              select: function( event, ui ) {
+                var terms = split( this.value );
+                terms.pop();
+                terms.push( ui.item.value );
+                terms.push( "" );
+                this.value = terms.join( " " );
+                return false;
+              }
+            });
+        $("#formula-module-warning").hide();
+        $("#formula-body").show();
+        $("#formula-module-perform").show();
+    }else{
+        $("#formula-module-warning").show();
+        $("#formula-module-perform").hide();
+        $("#formula-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#formula-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#formulaModal").modal();
+}
+
+function showFactorizeModule(id){
+    $("#factorize-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#factorize-column").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#factorize-column").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#factorize-module-warning").hide();
+        $("#factorize-body").show();
+    }else{
+        $("#factorize-module-warning").show();
+        $("#factorize-module-perform").hide();
+        $("#factorize-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#factorize-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#factorizeModal").modal();
+}
+
 function remakeOutputFeet(id, output_feet){
   var data = $('#content').flowchart('getData');
   var new_feet = {};
@@ -755,6 +859,29 @@ function performJoinModule(){
         left: left,
         right: right
     };
+    var left_data = metadata[id]['input_metadata'][0]['shape'];
+    var right_data = metadata[id]['input_metadata'][1]['shape'];
+    var final_data = {};
+    if(left == right){
+        final_data[left] = left_data[left];
+        delete left_data[left];
+        delete right_data[right];
+    }
+    $.each(left_data, function(index, value){
+        if(index in right_data){
+            final_data["x_" + index] = left_data[index];
+        }else{
+            final_data[index] = left_data[index];
+        }
+    });
+    $.each(right_data, function(index, value){
+        if(index in left_data){
+            final_data["y_" + index] = right_data[index];
+        }else{
+            final_data[index] = right_data[index];
+        }
+    });
+    metadata[id]['shape'] = final_data;
     var output_feet = $("#join-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#joinDataModal").modal('hide');
@@ -762,6 +889,23 @@ function performJoinModule(){
 
 function performAppendModule(){
     var id = $("#append-file-id").val();
+
+    var left_data = metadata[id]['input_metadata'][0]['shape'];
+    var right_data = metadata[id]['input_metadata'][1]['shape'];
+    var same = true;
+
+    $.each(right_data, function(index, value){
+        if(index in left_data){
+            same = false;
+        }
+    });
+
+    if(same){
+        metadata[id]['shape'] = left_data;
+    }else{
+        // Error
+    }
+
     var output_feet = $("#append-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#appendDataModal").modal('hide');
@@ -792,6 +936,23 @@ function performAggregateModule(){
     metadata[id]["group_by"] = group_by;
     metadata[id]["target"] = target;
     metadata[id]["function"] = f;
+
+    shape = metadata[id]["input_shape"];
+    final_data = {};
+
+    if(group_by.includes(",")){
+        tmp = group_by.split(",");
+        for(var i in tmp){
+            final_data[tmp[i]] = shape[tmp[i]];
+        }
+    }else{
+        final_data[group_by] = shape[group_by];
+    }
+
+    final_data[target] = shape[target];
+
+    metadata[id]['shape'] = final_data;
+
     var output_feet = $("#aggregate-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#queryAggregateModal").modal('hide');
@@ -804,6 +965,7 @@ function performFillnaAggregateModule(){
     metadata[id]["target"] = target;
     metadata[id]["function"] = f;
     var output_feet = $("#fillna-aggregate-output-feet").val();
+    metadata[id]['shape'] = metadata[id]['input_shape'];
     remakeOutputFeet(id, output_feet);
     $("#fillnaAggregateModal").modal('hide');
 }
@@ -814,6 +976,7 @@ function performFillnaOCModule(){
     var other = $("#fillna-oc-ocolumn").val();
     metadata[id]["target"] = target;
     metadata[id]["other"] = other;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
     var output_feet = $("#fillna-oc-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#fillnaOCModal").modal('hide');
@@ -825,6 +988,7 @@ function performFillnaValueModule(){
     var value = $("#fillna-value-val").val();
     metadata[id]["target"] = target;
     metadata[id]["value"] = value;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
     var output_feet = $("#fillna-value-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#fillnaValueModal").modal('hide');
@@ -834,9 +998,39 @@ function stringExtractPerform(){
     var id = $("#string-extract-id").val();
     var target = $("#string-extract-column").val();
     var delimiter = $("#delimiter").val();
+    var new_name = $("#string-extract-name").val();
     metadata[id]['target'] = target;
     metadata[id]['delimiter'] = delimiter;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    metadata[id]['shape'][new_name] = 'object';
     var output_feet = $("#string-extract-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#stringExtractModal").modal('hide');
+}
+
+function performFormulaModule(){
+    var id = $("#formula-id").val();
+    var formula = $("#formula-input").val();
+    var new_name = $("#formula-column").val();
+    metadata[id]['formula'] = formula;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    metadata[id]['shape'][new_name] = 'int64';
+    var output_feet = $("#formula-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#formulaModal").modal('hide');
+}
+
+function performFactorizeModule(){
+    var id = $("#factorize-id").val();
+    var target = $("#factorize-column").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#factorize-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#factorizeModal").modal('hide');
+}
+
+function getMetadata(){
+    console.log(JSON.stringify(metadata));
+    return metadata;
 }

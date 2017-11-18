@@ -85,10 +85,12 @@
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item"><a href="#" onclick="stringExtractProcedure()"><i class="lnr lnr-code"></i> String Extract</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="formulaProcedure()"><i class="lnr lnr-code"></i> Simple Formula</a></li>
                             <li role="separator" class="dropdown-divider"></li>
                             <li class="dropdown-item"><a href="#" onclick="fillnaAggregateProcedure()"><i class="lnr lnr-pencil"></i> Fill NA With Aggregation</a></li>
                             <li class="dropdown-item"><a href="#" onclick="fillnaOCProcedure()"><i class="lnr lnr-pencil"></i> Fill NA With Other Column</a></li>
                             <li class="dropdown-item"><a href="#" onclick="fillnaValueProcedure()"><i class="lnr lnr-pencil"></i> Fill NA With Value</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="factorizeProcedure()"><i class="lnr lnr-pencil"></i> Factorize</a></li>
                             <li role="separator" class="dropdown-divider"></li>
                             <li class="dropdown-item"><a href="#" onclick="addModel()"><i class="lnr lnr-rocket"></i> Model Creation</a></li>
                         </ul>
@@ -490,6 +492,11 @@
                                 <label for="delimiter">Delimiter: </label>
                                 <input type="text" id="delimiter" name="delimiter" class="form-control">
                             </div>
+                            <hr>
+                            <div class="form-group">
+                                <label for="string-extract-name">New Column Name: </label>
+                                <input type="text" class="form-control" id="string-extract-name" name="string-extract-name" placeholder="New Column Name">
+                            </div>
                         </div>
                         <hr>
                         <label for="string-extract-output-feet">Output Feets: </label>
@@ -633,13 +640,97 @@
             </div>
         </div>
 
+        <!-- Simple Formula Modal -->
+        <div class="modal" id="formulaModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Simple Formula Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="formula-id">
+                        <div class="alert alert-warning" id="formula-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="formula-body">
+                            <div class="alert alert-success">
+                                <span class="lnr lnr-rocket"></span> Operator Available: <strong>+</strong>, <strong>-</strong>, <strong>*</strong>, <strong>/</strong>,
+                            </div>
+                            <div class="form-group">
+                                <label for="formula-column">Formula Column: </label>
+                                <input type="text" class="form-control" id="formula-column" name="formula-column" placeholder="New Column Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="formula-input">Formula: </label>
+                                <input type="text" id="formula-input" name="formula-input" class="form-control" placeholder="Formula">
+                            </div>
+                        </div>
+                        <hr>
+                        <label for="formula-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="formula-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="fillna-value-module-perform" onclick="performFormulaModule()"><i class="lnr lnr-pencil"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('formula-id', 'formulaModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factorize Module Modal -->
+        <div class="modal" id="factorizeModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Factorize Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="factorize-id">
+                        <div class="alert alert-warning" id="factorize-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="factorize-body">
+                            <div class="form-group">
+                                <label for="formula-column">Factorize Column: </label>
+                                <select name="factorize-column" id="factorize-column" class="form-control"></select>
+                            </div>
+                        </div>
+                        <hr>
+                        <label for="factorize-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="factorize-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="factorize-module-perform" onclick="performFactorizeModule()"><i class="lnr lnr-pencil"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('factorize-id', 'factorizeModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
         <!-- <script src="{{ url_for('static', filename='query-builder/bower_components/jquery/dist/jquery.js') }}"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="{{ url_for('static', filename='js/intro.js') }}"></script>
+
+        <style>
+            .ui-autocomplete { z-index:2147483647; }
+        </style>
 
         <!-- <script src="{{ url_for('static', filename='js/doT.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/jQuery.extendext.min.js') }}"></script>
@@ -696,8 +787,8 @@
                 var data = $("#content").flowchart('getData');
                 //console.log(JSON.stringify(data))
                 //alert(JSON.stringify(data));
+                var metadata = getMetadata();
                 alert(JSON.stringify(metadata));
-                console.log(JSON.stringify(metadata));
             }
         </script>
     </body>
