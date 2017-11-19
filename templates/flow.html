@@ -67,42 +67,6 @@
                             <li class="dropdown-item" id=""><a href="#"><i class="lnr lnr-database"></i> Add Dataset From Database Connection</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Query <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#" onclick="filterProcedure()"><i class="lnr lnr-funnel"></i> Filter</a></li>
-                            <li class="dropdown-item"><a href="#" onclick="columnFilterProcedure()"><i class="lnr lnr-flag"></i> Column Filter</a></li>
-                            <li class="dropdown-item"><a href="#" onclick="updateColumnProcedure()"><i class="lnr lnr-history"></i> Update Record</a></li>
-                            <li class="dropdown-item"><a href="#" onclick="updateValueProcedure()"><i class="lnr lnr-history"></i> Update Record (Value)</a></li>
-                            <li class="dropdown-item"><a href="#" onclick="deleteProcedure()"><i class="lnr lnr-trash"></i> Delete Record</a></li>
-                            <li role="separator" class="dropdown-divider"></li>
-                            <li class="dropdown-item"><a href="#" onclick="appendProcedure()"><i class="lnr lnr-page-break"></i> Append Data</a></li>
-                            <li class="dropdown-item"><a href="#" onclick="joinProcedure()"><i class="lnr lnr-pushpin"></i> Join Dataset</a></li>
-                            <li role="separator" class="dropdown-divider"></li>
-                            <li class="dropdown-item"><a href="#" onclick="aggregateProcedure()"><i class="lnr lnr-link"></i> Aggregation</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tools<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#" onclick="stringExtractProcedure()"><i class="lnr lnr-code"></i> String Extract</a></li>
-                            <li class="dropdown-item"><a href="#" onclick="formulaProcedure()"><i class="lnr lnr-code"></i> Simple Formula</a></li>
-                            <li role="separator" class="dropdown-divider"></li>
-                            <li class="dropdown-item"><a href="#" onclick="fillnaAggregateProcedure()"><i class="lnr lnr-pencil"></i> Fill NA With Aggregation</a></li>
-                            <li class="dropdown-item"><a href="#" onclick="fillnaOCProcedure()"><i class="lnr lnr-pencil"></i> Fill NA With Other Column</a></li>
-                            <li class="dropdown-item"><a href="#" onclick="fillnaValueProcedure()"><i class="lnr lnr-pencil"></i> Fill NA With Value</a></li>
-                            <li class="dropdown-item"><a href="#" onclick="factorizeProcedure()"><i class="lnr lnr-pencil"></i> Factorize</a></li>
-                            <li role="separator" class="dropdown-divider"></li>
-                            <li class="dropdown-item"><a href="#" onclick="addModel()"><i class="lnr lnr-rocket"></i> Model Creation</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Chart <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-flag"></i> Column Filter</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-funnel"></i> Filter</a></li>
-                        </ul>
-                    </li>
                 </ul>
                 <ul class="navbar-nav navbar-right">
                     <li class="nav-item dropdown">
@@ -116,20 +80,16 @@
             <div class="row" data-step="2" data-intro="Ok, wasn't that fun?" data-position='up' data-scrollTo='tooltip'>
                 <div class="col-sm-2" style="height: 450px; overflow-y: scroll">
                     <br>
-                    <h5>Query Module: </h5>
-                    <hr>
-                    <div class="card text-white bg-success" id="filter-module">
-                        <div class="card-body">
-                            <div class="text-center">
-                                <img src="{{ url_for('static', filename='img/cube.png') }}" alt="" width="32">
-                                <p style="font-size: 18px; margin:0;"> Filter Module</p>
-                            </div>
-                        </div>
+                    <input type="text" name="process-search" id="process-search" class="form-control" placeholder="Search ...">
+                    <br>
+                    <div id="process-container">
+                        <h5>Modules: </h5>
+                        <hr>
                     </div>
                 </div>
                 <div class="col-sm-10">
                     <div id="content-wrapper" style="width:100%; height: 450px; overflow: scroll; overflow-y: hidden">
-                        <div id="content" style="width:5000px; height: 100%;"></div>
+                        <div class="droppable" id="content" style="width:5000px; height: 100%;"></div>
                     </div>
                 </div>
             </div>
@@ -794,6 +754,56 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="factorize-module-perform" onclick="performFactorizeModule()"><i class="lnr lnr-pencil"></i> Execute</button>
                         <button class="btn btn-danger" onclick="deleteModule('factorize-id', 'factorizeModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column Merge Module Modal -->
+        <div class="modal" id="columnMergeModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Column Merge Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="cmerge-id">
+                        <div class="alert alert-warning" id="cmerge-module-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="cmerge-body">
+                            <div class="form-group">
+                                <label for="cmerge-new-name">New Column Name</label>
+                                <input type="text" id="cmerge-new-name" class="form-control" placeholder="New Column Name">
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="lcolumn-cmerge">Left Column: </label>
+                                        <select name="lcolumn-cmerge" id="lcolumn-cmerge" class="form-control"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="rcolumn-cmerge">Right Column: </label>
+                                        <select name="rcolumn-cmerge" id="rcolumn-cmerge" class="form-control"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <label for="cmerge-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="cmerge-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="cmerge-module-perform" onclick="performColumnMerge()"><i class="lnr lnr-pencil"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('cmerge-id', 'columnMergeModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>

@@ -7,7 +7,191 @@ function showProperties(){
     alert(id);
 }
 
+var process_list = [
+    {
+        id: "filter-module",
+        process_id: "process:filter",
+        background: "bg-success",
+        image: "img/query-filter.png",
+        name: "Filter Module",
+        type: "query"
+    },
+    {
+        id: "cfilter-module",
+        process_id: "process:cfilter",
+        background: "bg-success",
+        image: "img/query-filter.png",
+        name: "Column Filter Module",
+        type: "query"
+    },
+    {
+        id: "delete-module",
+        process_id: "process:delete",
+        background: "bg-danger",
+        image: "img/query-delete.png",
+        name: "Delete Module",
+        type: "query"
+    },
+    {
+        id: "update-module",
+        process_id: "process:update-column",
+        background: "bg-warning",
+        image: "img/query-update.png",
+        name: "Update Column Module",
+        type: "query"
+    },
+    {
+        id: "update-value-module",
+        process_id: "process:update-value",
+        background: "bg-warning",
+        image: "img/query-update.png",
+        name: "Update Column With Value Module",
+        type: "query"
+    },
+    {
+        id: "join-module",
+        process_id: "process:join",
+        background: "bg-dark",
+        image: "img/query-join.png",
+        name: "Join Data Module",
+        type: "query"
+    },
+    {
+        id: "update-module",
+        process_id: "process:append",
+        background: "bg-dark",
+        image: "img/query-append.png",
+        name: "Append Module",
+        type: "query"
+    },
+    {
+        id: "aggregate-module",
+        process_id: "process:aggregate",
+        background: "bg-success",
+        image: "img/query-aggregate.png",
+        name: "Aggregate Module",
+        type: "query"
+    },
+    {
+        id: "string-extract-module",
+        process_id: "process:sextract",
+        background: "bg-dark",
+        image: "img/tool-string.png",
+        name: "String Extract Module",
+        type: "tool"
+    },
+    {
+        id: "formula-module",
+        process_id: "process:formula",
+        background: "bg-dark",
+        image: "img/tool-formula.png",
+        name: "Formula Module",
+        type: "tool"
+    },
+    {
+        id: "fillna-aggregate-module",
+        process_id: "process:fillna-aggregate",
+        background: "bg-dark",
+        image: "img/tool-fillna.png",
+        name: "Fill NA With Aggregate",
+        type: "tool"
+    },
+    {
+        id: "fillna-oc-module",
+        process_id: "process:fillna-oc",
+        background: "bg-dark",
+        image: "img/tool-fillna.png",
+        name: "Fill NA With Other Column",
+        type: "tool"
+    },
+    {
+        id: "fillna-value-module",
+        process_id: "process:fillna-value",
+        background: "bg-dark",
+        image: "img/tool-fillna.png",
+        name: "Fill NA With Value",
+        type: "tool"
+    },
+    {
+        id: "factorize-module",
+        process_id: "process:factorize",
+        background: "bg-dark",
+        image: "img/tool-factorize.png",
+        name: "Factorize Module",
+        type: "tool"
+    },
+    {
+        id: "column-merge-module",
+        process_id: "process:cmerge",
+        background: "bg-dark",
+        image: "img/tool-column-merge.png",
+        name: "Column Merge Module",
+        type: "tool"
+    },
+];
+
 $(document).ready(function(){
+    for(var i in process_list){
+        data = process_list[i];
+        $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
+    }
+
+    $("#process-search").keyup(function(){
+        var str = $("#process-search").val();
+        $("#process-container").html("");
+        for(var i in process_list){
+            data = process_list[i];
+            if(data['id'].indexOf(str) >= 0){
+                $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
+            }
+        }
+    });
+
+    $('.draggable').draggable({
+        revert: "invalid",
+        appendTo: 'body',
+        stack: ".draggable",
+        helper: 'clone'
+    });
+    $('.droppable').droppable({
+        accept: ".draggable",
+        drop: function (event, ui) {
+            leftPosition  = ui.offset.left - $(this).offset().left;
+            topPosition   = ui.offset.top - $(this).offset().top;
+            var id = ui.draggable.attr("data-process");
+            if(id == "process:delete"){
+                deleteProcedure(leftPosition, topPosition);
+            }else if(id == "process:filter"){
+                filterProcedure(leftPosition, topPosition);
+            }else if(id == "process:cfilter"){
+                columnFilterProcedure(leftPosition, topPosition);
+            }else if(id == "process:append"){
+                appendProcedure(leftPosition, topPosition);
+            }else if(id == "process:update-column"){
+                updateColumnProcedure(leftPosition, topPosition);
+            }else if(id == "process:update-value"){
+                updateValueProcedure(leftPosition, topPosition);
+            }else if(id == "process:join"){
+                joinProcedure(leftPosition, topPosition);
+            }else if(id == "process:aggregate"){
+                aggregateProcedure(leftPosition, topPosition);
+            }else if(id == "process:sextract"){
+                stringExtractProcedure(leftPosition, topPosition);
+            }else if(id == "process:formula"){
+                formulaProcedure(leftPosition, topPosition);
+            }else if(id == "process:fillna-aggregate"){
+                fillnaAggregateProcedure(leftPosition, topPosition);
+            }else if(id == "process:fillna-oc"){
+                fillnaOCProcedure(leftPosition, topPosition);
+            }else if(id == "process:fillna-value"){
+                fillnaValueProcedure(leftPosition, topPosition);
+            }else if(id == "process:factorize"){
+                factorizeProcedure(leftPosition, topPosition);
+            }else if(id == "process:cmerge"){
+                columnMergeProcedure(leftPosition, topPosition);
+            }
+        }
+    });
     $('#content').flowchart({
         onOperatorSelect: function (operatorId) {
             if(metadata[operatorId]['type'] == 'input'){
@@ -40,6 +224,8 @@ $(document).ready(function(){
                 showUpdateQuery(operatorId);
             }else if (metadata[operatorId]['type'] == 'process:update-value'){
                 showUpdateValue(operatorId);
+            }else if(metadata[operatorId]['type'] == 'process:cmerge'){
+                showColumnMerge(operatorId);
             }
             return true;
         },
@@ -65,7 +251,7 @@ $(document).ready(function(){
               });
               metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
               // metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
-            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize'){
+            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge'){
                 metadata[linkData['toOperator']]['input_shape'] = metadata[linkData['fromOperator']]['shape']; 
             }
             return true;
@@ -94,7 +280,7 @@ $(document).ready(function(){
                 if(metadata[link['toOperator']]['type'] == 'process:join'){
                     link['toOperator']['metadata'] = {};
                 }
-            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize'){
+            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize' || metadata[link['toOperator']]['type'] == 'process:cmerge'){
                 metadata[link['toOperator']]['input_shape'] = {};
             }
             metadata[link['toOperator']]['shape'] = {};
@@ -144,11 +330,11 @@ function addFile(filename){
     return operatorId;
 }
 
-function addOperatorSingleInput(operatorName){
+function addOperatorSingleInput(operatorName, left, top){
     var operatorId = 'created_operator_' + operatorI;
     var operatorData = {
-        top: 60,
-        left: 500,
+        top: top,
+        left: left,
         properties: {
             title: operatorName,
             outputs: {
@@ -194,11 +380,11 @@ function addModel(modelName){
 
     }
 
-function addOperatorTwoInput(operatorName){
+function addOperatorTwoInput(operatorName, left, top){
     var operatorId = 'created_operator_' + operatorI;
     var operatorData = {
-        top: 60,
-        left: 500,
+        top: top,
+        left: left,
         properties: {
             title:  operatorName,
             outputs: {
@@ -244,8 +430,8 @@ function addFileProcedure(){
     });
 }
 
-function deleteProcedure(){
-    var id = addOperatorSingleInput('Delete Module');
+function deleteProcedure(left, top){
+    var id = addOperatorSingleInput('Delete Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:delete',
@@ -258,8 +444,8 @@ function deleteProcedure(){
     metadata[id] = data;
 }
 
-function filterProcedure(){
-    var id = addOperatorSingleInput('Filter Module');
+function filterProcedure(left, top){
+    var id = addOperatorSingleInput('Filter Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:filter',
@@ -272,8 +458,8 @@ function filterProcedure(){
     metadata[id] = data;
 }
 
-function joinProcedure(){
-    var id = addOperatorTwoInput('Join Module');
+function joinProcedure(left, top){
+    var id = addOperatorTwoInput('Join Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:join',
@@ -286,8 +472,8 @@ function joinProcedure(){
     metadata[id] = data;
 }
 
-function appendProcedure(){
-    var id = addOperatorTwoInput('Append Module');
+function appendProcedure(left, top){
+    var id = addOperatorTwoInput('Append Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:append',
@@ -299,8 +485,8 @@ function appendProcedure(){
     metadata[id] = data;
 }
 
-function columnFilterProcedure(){
-    var id = addOperatorSingleInput('Column Filter Module');
+function columnFilterProcedure(left, top){
+    var id = addOperatorSingleInput('Column Filter Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:cfilter',
@@ -312,8 +498,8 @@ function columnFilterProcedure(){
     metadata[id] = data;
 }
 
-function aggregateProcedure(){
-    var id = addOperatorSingleInput('Query Aggregation Module');
+function aggregateProcedure(left, top){
+    var id = addOperatorSingleInput('Query Aggregation Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:aggregate',
@@ -328,8 +514,8 @@ function aggregateProcedure(){
     metadata[id] = data;
 }
 
-function stringExtractProcedure(){
-    var id = addOperatorSingleInput('String Extract Module');
+function stringExtractProcedure(left, top){
+    var id = addOperatorSingleInput('String Extract Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:sextract',
@@ -343,8 +529,8 @@ function stringExtractProcedure(){
     metadata[id] = data;
 }
 
-function fillnaAggregateProcedure(){
-    var id = addOperatorSingleInput('Fill NA Aggregate Module');
+function fillnaAggregateProcedure(left, top){
+    var id = addOperatorSingleInput('Fill NA Aggregate Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:fillna-aggregate',
@@ -358,8 +544,8 @@ function fillnaAggregateProcedure(){
     metadata[id] = data;
 }
 
-function fillnaOCProcedure(){
-    var id = addOperatorSingleInput('Fill NA With Other Column Module');
+function fillnaOCProcedure(left, top){
+    var id = addOperatorSingleInput('Fill NA With Other Column Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:fillna-oc',
@@ -373,8 +559,8 @@ function fillnaOCProcedure(){
     metadata[id] = data;
 }
 
-function fillnaValueProcedure(){
-    var id = addOperatorSingleInput('Fill NA With Value Module');
+function fillnaValueProcedure(left, top){
+    var id = addOperatorSingleInput('Fill NA With Value Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:fillna-value',
@@ -388,8 +574,8 @@ function fillnaValueProcedure(){
     metadata[id] = data;
 }
 
-function formulaProcedure(){
-    var id = addOperatorSingleInput('Formula Module');
+function formulaProcedure(left, top){
+    var id = addOperatorSingleInput('Formula Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:formula',
@@ -402,8 +588,8 @@ function formulaProcedure(){
     metadata[id] = data;
 }
 
-function factorizeProcedure(){
-    var id = addOperatorSingleInput('Factorize Module');
+function factorizeProcedure(left, top){
+    var id = addOperatorSingleInput('Factorize Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:factorize',
@@ -416,8 +602,8 @@ function factorizeProcedure(){
     metadata[id] = data;
 }
 
-function updateColumnProcedure(){
-    var id = addOperatorSingleInput('Update Column Module');
+function updateColumnProcedure(left, top){
+    var id = addOperatorSingleInput('Update Column Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:update-column',
@@ -432,8 +618,8 @@ function updateColumnProcedure(){
     metadata[id] = data;
 }
 
-function updateValueProcedure(){
-    var id = addOperatorSingleInput('Update Value Module');
+function updateValueProcedure(left, top){
+    var id = addOperatorSingleInput('Update Value Module', left, top);
     var data = {
         id_operation: id,
         type: 'process:update-value',
@@ -442,6 +628,22 @@ function updateValueProcedure(){
         query: {},
         target: "",
         into: "",
+        shape: {},
+        link: []
+    };
+    metadata[id] = data;
+}
+
+function columnMergeProcedure(left, top){
+    var id = addOperatorSingleInput('Column Merge Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'process:cmerge',
+        name: 'column-merge',
+        input_shape: {},
+        left: "",
+        right: "",
+        new: "",
         shape: {},
         link: []
     };
@@ -513,6 +715,29 @@ function showUpdateQuery(id){
     var data = $("#content").flowchart('getData');
     $("#update-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
     $("#updateDataModal").modal();
+}
+
+function showColumnMerge(id){
+    $("#cmerge-id").val(id);
+    $("#cmerge-module-warning").hide();
+    $("#cmerge-module-perform").show();
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#lcolumn-cmerge").append('<option value="' + index + '">' + index + '</option>');
+            $("#rcolumn-cmerge").append('<option value="' + index + '">' + index + '</option>');
+        });
+
+        $("#cmerge-module-warning").hide();
+        $("#cmerge-column-body").show();
+    }else{
+        $("#cmerge-module-warning").show();
+        $("#cmerge-column-body").hide();
+        $("#cmerge-module-perform").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#cmerge-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#columnMergeModal").modal();
 }
 
 function showUpdateValue(id){
@@ -1038,7 +1263,7 @@ function performAppendModule(){
     var same = true;
 
     $.each(right_data, function(index, value){
-        if(index in left_data){
+        if(!(index in left_data)){
             same = false;
         }
     });
@@ -1171,6 +1396,21 @@ function performFactorizeModule(){
     var output_feet = $("#factorize-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#factorizeModal").modal('hide');
+}
+
+function performColumnMerge(){
+    var id = $("#cmerge-id").val();
+    var left = $("#lcolumn-cmerge").val();
+    var right = $("#lcolumn-cmerge").val();
+    var n = $("#cmerge-new-name").val();
+    metadata[id]['left'] = left;
+    metadata[id]['right'] = right;
+    metadata[id]['new'] = n;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    metadata[id]['shape'][n] = 'object';
+    var output_feet = $("#cmerge-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#columnMergeModal").modal('hide');
 }
 
 function getMetadata(){
