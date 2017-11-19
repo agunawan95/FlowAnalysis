@@ -36,11 +36,15 @@ $(document).ready(function(){
                 showFormulaModule(operatorId);
             }else if (metadata[operatorId]['type'] == 'process:factorize'){
                 showFactorizeModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'process:update-column'){
+                showUpdateQuery(operatorId);
+            }else if (metadata[operatorId]['type'] == 'process:update-value'){
+                showUpdateValue(operatorId);
             }
             return true;
         },
         onLinkCreate: function (linkId, linkData) {
-            if(metadata[linkData['toOperator']]['type'] == 'process:delete' || metadata[linkData['toOperator']]['type'] == 'process:filter'){
+            if(metadata[linkData['toOperator']]['type'] == 'process:delete' || metadata[linkData['toOperator']]['type'] == 'process:filter' || metadata[linkData['toOperator']]['type'] == 'process:update-column' || metadata[linkData['toOperator']]['type'] == 'process:update-value'){
                 $.ajax({
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
@@ -77,7 +81,7 @@ $(document).ready(function(){
             }
             var index = metadata[link['fromOperator']]['link'].indexOf(link['toOperator']);
             metadata[link['fromOperator']]['link'].splice(index, 1);
-            if(metadata[link['toOperator']]['type'] == 'process:delete' || metadata[link['toOperator']]['type'] == 'process:filter'){
+            if(metadata[link['toOperator']]['type'] == 'process:delete' || metadata[link['toOperator']]['type'] == 'process:filter' || metadata[link['toOperator']]['type'] == 'process:update-column' || metadata[link['toOperator']]['type'] == 'process:update-value'){
                 metadata[link['toOperator']]['query_metadata'] = [];
             }else if(metadata[link['toOperator']]['type'] == 'process:join' || metadata[link['toOperator']]['type'] == 'process:append'){
                 var target = -1;
@@ -405,7 +409,39 @@ function factorizeProcedure(){
         type: 'process:factorize',
         name: 'factorize',
         input_shape: {},
-        taget: "",
+        target: "",
+        shape: {},
+        link: []
+    };
+    metadata[id] = data;
+}
+
+function updateColumnProcedure(){
+    var id = addOperatorSingleInput('Update Column Module');
+    var data = {
+        id_operation: id,
+        type: 'process:update-column',
+        name: 'update-column',
+        query_metadata: {},
+        query: {},
+        target: "",
+        into: "",
+        shape: {},
+        link: []
+    };
+    metadata[id] = data;
+}
+
+function updateValueProcedure(){
+    var id = addOperatorSingleInput('Update Value Module');
+    var data = {
+        id_operation: id,
+        type: 'process:update-value',
+        name: 'update-value',
+        query_metadata: {},
+        query: {},
+        target: "",
+        into: "",
         shape: {},
         link: []
     };
@@ -444,6 +480,71 @@ function showDeleteQuery(id){
     var data = $("#content").flowchart('getData');
     $("#delete-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
     $("#deleteDataModal").modal();
+}
+
+function showUpdateQuery(id){
+    $("#update-module-id").val(id);
+    $("#update-module-warning").hide();
+    $("#update-module-perform").show();
+    if (metadata[id]['query_metadata'].length > 0){
+        $('#query-builder-update').queryBuilder({
+            allow_empty: true,
+            sort_filters: true,
+            filters: metadata[id]['query_metadata']
+        });
+        if(!jQuery.isEmptyObject(metadata[id]['query'])){
+          $('#query-builder-update').queryBuilder('setRules', metadata[id]['query']);
+        }else{
+          $('#query-builder-update').queryBuilder('setRules', {condition: "AND", rules: []});
+        }
+
+        $.each(metadata[id]['shape'], function(index, value){
+            $("#update-target").append('<option value="' + index + '">' + index + '</option>');
+            $("#update-to-column").append('<option value="' + index + '">' + index + '</option>');
+        });
+
+        $("#update-module-warning").hide();
+        $("#update-column-body").show();
+    }else{
+        $("#update-module-warning").show();
+        $("#update-column-body").hide();
+        $("#update-module-perform").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#update-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#updateDataModal").modal();
+}
+
+function showUpdateValue(id){
+    $("#update-value-id").val(id);
+    $("#update-value-warning").hide();
+    $("#update-value-perform").show();
+    if (metadata[id]['query_metadata'].length > 0){
+        $('#query-builder-update-value').queryBuilder({
+            allow_empty: true,
+            sort_filters: true,
+            filters: metadata[id]['query_metadata']
+        });
+        if(!jQuery.isEmptyObject(metadata[id]['query'])){
+          $('#query-builder-update-value').queryBuilder('setRules', metadata[id]['query']);
+        }else{
+          $('#query-builder-update-value').queryBuilder('setRules', {condition: "AND", rules: []});
+        }
+
+        $.each(metadata[id]['shape'], function(index, value){
+            $("#update-target-column").append('<option value="' + index + '">' + index + '</option>');
+        });
+
+        $("#update-value-warning").hide();
+        $("#update-value-body").show();
+    }else{
+        $("#update-value-warning").show();
+        $("#update-value-body").hide();
+        $("#update-value-perform").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#update-value-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#updateValueModal").modal();
 }
 
 function showFilterQuery(id){
@@ -832,6 +933,48 @@ function performDeleteModule(){
     var output_feet = $("#delete-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#deleteDataModal").modal('hide');
+}
+
+function performUpdateModule(){
+    var id = $("#update-module-id").val();
+    var result = $('#query-builder-update').queryBuilder('getRules', {
+      get_flags: true,
+      skip_empty: true
+    });
+
+    if (!$.isEmptyObject(result)) {
+      metadata[id]['query'] = result;
+    }
+
+    var target = $("#update-target").val();
+    var into = $("#update-to-column").val();
+    metadata[id]['target'] = target;
+    metadata[id]['into'] = into;
+
+    var output_feet = $("#update-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#updateDataModal").modal('hide');
+}
+
+function performUpdateValueModule(){
+    var id = $("#update-value-id").val();
+    var result = $('#query-builder-update-value').queryBuilder('getRules', {
+      get_flags: true,
+      skip_empty: true
+    });
+
+    if (!$.isEmptyObject(result)) {
+      metadata[id]['query'] = result;
+    }
+
+    var target = $("#update-target-column").val();
+    var into = $("#update-to-value").val();
+    metadata[id]['target'] = target;
+    metadata[id]['into'] = into;
+
+    var output_feet = $("#update-value-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#updateValueModal").modal('hide');
 }
 
 function performFilterModule(){

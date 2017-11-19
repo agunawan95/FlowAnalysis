@@ -72,7 +72,8 @@
                         <ul class="dropdown-menu">
                             <li class="dropdown-item"><a href="#" onclick="filterProcedure()"><i class="lnr lnr-funnel"></i> Filter</a></li>
                             <li class="dropdown-item"><a href="#" onclick="columnFilterProcedure()"><i class="lnr lnr-flag"></i> Column Filter</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-history"></i> Update Record</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="updateColumnProcedure()"><i class="lnr lnr-history"></i> Update Record</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="updateValueProcedure()"><i class="lnr lnr-history"></i> Update Record (Value)</a></li>
                             <li class="dropdown-item"><a href="#" onclick="deleteProcedure()"><i class="lnr lnr-trash"></i> Delete Record</a></li>
                             <li role="separator" class="dropdown-divider"></li>
                             <li class="dropdown-item"><a href="#" onclick="appendProcedure()"><i class="lnr lnr-page-break"></i> Append Data</a></li>
@@ -113,7 +114,20 @@
 
         <div class="container-fluid">
             <div class="row" data-step="2" data-intro="Ok, wasn't that fun?" data-position='up' data-scrollTo='tooltip'>
-                <div class="col-sm-12">
+                <div class="col-sm-2" style="height: 450px; overflow-y: scroll">
+                    <br>
+                    <h5>Query Module: </h5>
+                    <hr>
+                    <div class="card text-white bg-success" id="filter-module">
+                        <div class="card-body">
+                            <div class="text-center">
+                                <img src="{{ url_for('static', filename='img/cube.png') }}" alt="" width="32">
+                                <p style="font-size: 18px; margin:0;"> Filter Module</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-10">
                     <div id="content-wrapper" style="width:100%; height: 450px; overflow: scroll; overflow-y: hidden">
                         <div id="content" style="width:5000px; height: 100%;"></div>
                     </div>
@@ -210,7 +224,7 @@
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Update Query Module</h5>
+                        <h5 class="modal-title">Update Query Module (With Other Column)</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -220,10 +234,77 @@
                         <div class="alert alert-warning" id="update-module-warning">
                             This Module Doesn't Have Input Flow! Please Make One!
                         </div>
-                        <div id="query-builder-update"></div>
+                        <div id="update-column-body">
+                            <div id="query-builder-update"></div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="update-target">Target: </label>
+                                        <select name="update-target" id="update-target" class="form-control"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="update-to-column">Update to: </label>
+                                    <select name="update-to-colummn" id="update-to-column" class="form-control"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <label for="update-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="update-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick=""><i class="lnr lnr-check"></i> Perform</button>
+                        <button type="button" class="btn btn-primary" onclick="performUpdateModule()"><i class="lnr lnr-check"></i> Perform</button>
+                        <button class="btn btn-danger" onclick="deleteModule('update-module-id', 'updateDataModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Value Modal -->
+        <div class="modal" id="updateValueModal">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Query Module (With Other Column)</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="update-value-id">
+                        <div class="alert alert-warning" id="update-value-warning">
+                            This Module Doesn't Have Input Flow! Please Make One!
+                        </div>
+                        <div id="update-value-body">
+                            <div id="query-builder-update-value"></div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="update-target-column">Target: </label>
+                                        <select name="update-target-column" id="update-target-column" class="form-control"></select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="update-to-value">Update to: </label>
+                                    <input type="text" name="update-to-value" id="update-to-value" class="form-control" placeholder="Value">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <label for="update-value-output-feet">Output Feets: </label>
+                        <form action="">
+                            <input id="update-value-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="performUpdateValueModule()"><i class="lnr lnr-check"></i> Perform</button>
+                        <button class="btn btn-danger" onclick="deleteModule('update-value-id', 'updateValueModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
