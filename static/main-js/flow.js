@@ -130,23 +130,7 @@ var process_list = [
     },
 ];
 
-$(document).ready(function(){
-    for(var i in process_list){
-        data = process_list[i];
-        $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
-    }
-
-    $("#process-search").keyup(function(){
-        var str = $("#process-search").val();
-        $("#process-container").html("");
-        for(var i in process_list){
-            data = process_list[i];
-            if(data['id'].indexOf(str) >= 0){
-                $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
-            }
-        }
-    });
-
+function initDraggable(){
     $('.draggable').draggable({
         revert: "invalid",
         appendTo: 'body',
@@ -192,6 +176,28 @@ $(document).ready(function(){
             }
         }
     });
+}
+
+$(document).ready(function(){
+    for(var i in process_list){
+        data = process_list[i];
+        $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
+    }
+
+    $("#process-search").keyup(function(){
+        var str = $("#process-search").val();
+        $("#process-container").html("");
+        for(var i in process_list){
+            data = process_list[i];
+            if(data['id'].indexOf(str) >= 0){
+                $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
+            }
+        }
+        initDraggable();
+    });
+
+    initDraggable();
+
     $('#content').flowchart({
         onOperatorSelect: function (operatorId) {
             if(metadata[operatorId]['type'] == 'input'){
