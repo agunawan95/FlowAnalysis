@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import query_tools as qt
 
 
 class FlowProcess:
@@ -50,11 +51,34 @@ class FlowProcess:
                         self.process[key]['shared_input_resource'].append(self.id)
                         break
 
+    def extract_input(self, current, mode):
+        if mode == 1:
+            input = self.shared_resource[current['shared_input_resource'][0]]['data']
+            self.shared_resource[current['shared_input_resource'][0]]['count'] -= 1
+            if self.shared_resource[current['shared_input_resource'][0]]['count'] <= 0:
+                del self.shared_resource[current['shared_input_resource'][0]]
+            return input
+        elif mode == 2:
+            left = self.shared_resource[current['shared_input_resource'][0]]['data']
+            right = self.shared_resource[current['shared_input_resource'][1]]['data']
+
+            self.shared_resource[current['shared_input_resource'][0]]['count'] -= 1
+            self.shared_resource[current['shared_input_resource'][1]]['count'] -= 1
+
+            if self.shared_resource[current['shared_input_resource'][0]]['count'] <= 0:
+                del self.shared_resource[current['shared_input_resource'][0]]
+            if self.shared_resource[current['shared_input_resource'][1]]['count'] <= 0:
+                del self.shared_resource[current['shared_input_resource'][1]]
+            return left, right
+        else:
+            return None
+
     def run(self):
         self.process_init()
         while len(self.process) > 0:
             current = self.process[0]
             if current['type'] == 'input':
+                # Todo Change Input Condition
                 df = pd.read_csv("Data/" + str(current['name']))
                 count = 1
                 if len(current['link']) > 0:
@@ -67,10 +91,8 @@ class FlowProcess:
                 self.generate_next_bfs(current)
                 self.id += 1
             elif current['type'] == 'process:append':
-                print "Process Module: " + current['name']
                 if len(current['shared_input_resource']) == 2:
-                    left = self.shared_resource[current['shared_input_resource'][0]]['data']
-                    right = self.shared_resource[current['shared_input_resource'][1]]['data']
+                    left, right = self.extract_input(current, 2)
                     df = left.append(right)
                     count = 1
                     if len(current['link']) > 0:
@@ -80,23 +102,14 @@ class FlowProcess:
                         'count': count
                     }
                     self.generate_next_bfs(current)
-                    self.shared_resource[current['shared_input_resource'][0]]['count'] -= 1
-                    self.shared_resource[current['shared_input_resource'][1]]['count'] -= 1
-
-                    if self.shared_resource[current['shared_input_resource'][0]]['count'] <= 0:
-                        del self.shared_resource[current['shared_input_resource'][0]]
-                    if self.shared_resource[current['shared_input_resource'][1]]['count'] <= 0:
-                        del self.shared_resource[current['shared_input_resource'][1]]
                     self.id += 1
                 else:
                     self.process.append(current)
             elif current['type'] == 'process:join':
-                print "Process Module: " + current['name']
                 if len(current['shared_input_resource']) == 2:
-                    left = self.shared_resource[current['shared_input_resource'][0]]['data']
-                    right = self.shared_resource[current['shared_input_resource'][1]]['data']
-                    df = left.merge(right, left_on=current['metadata']['left'], right_on=current['metadata']['right'],
-                                    how=current['metadata']['how'])
+                    left, right = self.extract_input(current, 2)
+
+                    df = left.merge(right, left_on=current['metadata']['left'], right_on=current['metadata']['right'], how=current['metadata']['how'])
                     count = 1
                     if len(current['link']) > 0:
                         count = len(current['link'])
@@ -106,26 +119,189 @@ class FlowProcess:
                     }
                     self.generate_next_bfs(current)
                     self.id += 1
-
-                    self.shared_resource[current['shared_input_resource'][0]]['count'] -= 1
-                    self.shared_resource[current['shared_input_resource'][1]]['count'] -= 1
-
-                    if self.shared_resource[current['shared_input_resource'][0]]['count'] <= 0:
-                        del self.shared_resource[current['shared_input_resource'][0]]
-                    if self.shared_resource[current['shared_input_resource'][1]]['count'] <= 0:
-                        del self.shared_resource[current['shared_input_resource'][1]]
                 else:
                     self.process.append(current)
             elif current['type'] == 'process:cfilter':
-                print "Process Module: " + current['name']
-                input = self.shared_resource[current['shared_input_resource'][0]]['data']
-                self.shared_resource[current['shared_input_resource'][0]]['count'] -= 1
-                if self.shared_resource[current['shared_input_resource'][0]]['count'] <= 0:
-                    del self.shared_resource[current['shared_input_resource'][0]]
+                input = self.extract_input(current, 1)
                 desired_column = []
                 for key in current['shape']:
                     desired_column.append(key)
                 df = input[desired_column]
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:filter':
+                tools = qt.QueryTools()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                tools.set_condition(current['query'])
+                df = tools.get_filter()
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:update-value':
+                tools = qt.QueryTools()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                tools.set_condition(current['query'])
+                into = current['into']
+                if input.dtype[current['target']] == 'int64':
+                    into = int(into)
+                elif input.dtype[current['target']] == 'float64':
+                    into = float(into)
+                elif input.dtype[current['target']] == 'object':
+                    into = str(into)
+                tools.update(current['target'], into)
+                df = tools.data_frame()
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:update-column':
+                tools = qt.QueryTools()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                tools.set_condition(current['query'])
+                into = current['into']
+                tools.update(current['target'], into)
+                df = tools.data_frame()
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:delete':
+                tools = qt.QueryTools()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                tools.set_condition(current['query'])
+                tools.delete()
+                df = tools.data_frame()
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:aggregate':
+                tools = qt.QueryTools()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                gb = []
+                if ',' in str(current['groupby']).strip():
+                    gb = str(current['groupby']).strip().split(',')
+                else:
+                    gb.append(str(current['group_by']))
+                df = tools.get_aggregate(gb, current['function'], current['target'])
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:formula':
+                tools = qt.QueryTools()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                tools.execute_formula(current['formula'], current['new_column'])
+                df = tools.data_frame()
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:factorize':
+                input = self.extract_input(current, 1)
+                df = pd.factorize(input[current['target']])[0]
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:fillna-aggregate':
+                input = self.extract_input(current, 1)
+                f = current['function']
+                df = pd.DataFrame()
+                if f == 'sum':
+                    df = input.fillna(input[current['target']].sum())
+                elif f == 'avg':
+                    df = input.fillna(input[current['target']].mean())
+                elif f == 'count':
+                    df = input.fillna(input[current['target']].count())
+                elif f == 'std':
+                    df = input.fillna(input[current['target']].std())
+                elif f == 'max':
+                    df = input.fillna(input[current['target']].max())
+                elif f == 'min':
+                    df = input.fillna(input[current['target']].min())
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:fillna-oc':
+                input = self.extract_input(current, 1)
+                df = input.copy()
+                df[current['target']].fillna(df[current['other']])
+                count = 1
+                if len(current['link']) > 0:
+                    count = len(current['link'])
+                self.shared_resource[self.id] = {
+                    'data': df,
+                    'count': count
+                }
+                self.generate_next_bfs(current)
+                self.id += 1
+            elif current['type'] == 'process:fillna-value':
+                input = self.extract_input(current, 1)
+                df = input.copy()
+                into = df[current['value']]
+                if input.dtype[current['target']] == 'int64':
+                    into = int(into)
+                elif input.dtype[current['target']] == 'float64':
+                    into = float(into)
+                elif input.dtype[current['target']] == 'object':
+                    into = str(into)
+                df[current['target']].fillna(into)
                 count = 1
                 if len(current['link']) > 0:
                     count = len(current['link'])

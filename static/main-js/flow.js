@@ -81,15 +81,6 @@ var process_list = [
         tag: "aggregate, math, query"
     },
     {
-        id: "string-extract-module",
-        process_id: "process:sextract",
-        background: "bg-dark",
-        image: "img/tool-string.png",
-        name: "String Extract Module",
-        type: "tool",
-        tag: "string, extract, tool"
-    },
-    {
         id: "formula-module",
         process_id: "process:formula",
         background: "bg-dark",
@@ -133,16 +124,7 @@ var process_list = [
         name: "Factorize Module",
         type: "tool",
         tag: "factorize, transform, tool"
-    },
-    {
-        id: "column-merge-module",
-        process_id: "process:cmerge",
-        background: "bg-dark",
-        image: "img/tool-column-merge.png",
-        name: "Column Merge Module",
-        type: "tool",
-        tag: "merge, column, tool"
-    },
+    }
 ];
 
 function initDraggable(){
@@ -174,8 +156,6 @@ function initDraggable(){
                 joinProcedure(leftPosition, topPosition);
             }else if(id == "process:aggregate"){
                 aggregateProcedure(leftPosition, topPosition);
-            }else if(id == "process:sextract"){
-                stringExtractProcedure(leftPosition, topPosition);
             }else if(id == "process:formula"){
                 formulaProcedure(leftPosition, topPosition);
             }else if(id == "process:fillna-aggregate"){
@@ -186,19 +166,31 @@ function initDraggable(){
                 fillnaValueProcedure(leftPosition, topPosition);
             }else if(id == "process:factorize"){
                 factorizeProcedure(leftPosition, topPosition);
-            }else if(id == "process:cmerge"){
-                columnMergeProcedure(leftPosition, topPosition);
             }
         }
     });
 }
 
-$(document).ready(function(){
+function init_accordion(){
+    $("#process-container").hide();
+    $("#accordion").show();
+    $("#query-content").html("");
+    $("#tool-content").html("");
+    $("#chart-content").html("");
     for(var i in process_list){
         data = process_list[i];
-        $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
+        if(data['type'] == 'query'){
+            $("#query-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
+        }else if(data['type'] == 'tool'){
+            $("#tool-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
+        }else if(data['type'] == 'chart'){
+            $("#chart-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
+        }
     }
+}
 
+$(document).ready(function(){
+    init_accordion();
     $("#process-search").keyup(function(){
         var str = $("#process-search").val();
         $("#process-container").html("");
@@ -207,6 +199,11 @@ $(document).ready(function(){
             if(data['tag'].indexOf(str) >= 0){
                 $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
             }
+        }
+        $("#process-container").show();
+        $("#accordion").hide();
+        if(str == ''){
+            init_accordion();
         }
         initDraggable();
     });
@@ -229,8 +226,6 @@ $(document).ready(function(){
                 showColumnFilter(operatorId);
             }else if(metadata[operatorId]['type'] == 'process:aggregate'){
                 showAggregate(operatorId);
-            }else if(metadata[operatorId]['type'] == 'process:sextract'){
-                showStringExtract(operatorId);
             }else if(metadata[operatorId]['type'] == 'process:fillna-aggregate'){
                 showFillnaAggregate(operatorId);
             }else if(metadata[operatorId]['type'] == 'process:fillna-oc'){
@@ -245,8 +240,6 @@ $(document).ready(function(){
                 showUpdateQuery(operatorId);
             }else if (metadata[operatorId]['type'] == 'process:update-value'){
                 showUpdateValue(operatorId);
-            }else if(metadata[operatorId]['type'] == 'process:cmerge'){
-                showColumnMerge(operatorId);
             }
             return true;
         },
@@ -553,21 +546,6 @@ function aggregateProcedure(left, top){
     metadata[id] = data;
 }
 
-function stringExtractProcedure(left, top){
-    var id = addOperatorSingleInput('String Extract Module', left, top);
-    var data = {
-        id_operation: id,
-        type: 'process:sextract',
-        name: 'string-extract',
-        input_shape: {},
-        delimiter: "",
-        target: "",
-        shape: {},
-        link: []
-    };
-    metadata[id] = data;
-}
-
 function fillnaAggregateProcedure(left, top){
     var id = addOperatorSingleInput('Fill NA Aggregate Module', left, top);
     var data = {
@@ -673,22 +651,6 @@ function updateValueProcedure(left, top){
     metadata[id] = data;
 }
 
-function columnMergeProcedure(left, top){
-    var id = addOperatorSingleInput('Column Merge Module', left, top);
-    var data = {
-        id_operation: id,
-        type: 'process:cmerge',
-        name: 'column-merge',
-        input_shape: {},
-        left: "",
-        right: "",
-        new: "",
-        shape: {},
-        link: []
-    };
-    metadata[id] = data;
-}
-
 function deleteModule(id_container, id_modal){
     var id = $("#" + id_container).val();
     $('#content').flowchart('deleteOperator', id);
@@ -754,29 +716,6 @@ function showUpdateQuery(id){
     var data = $("#content").flowchart('getData');
     $("#update-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
     $("#updateDataModal").modal();
-}
-
-function showColumnMerge(id){
-    $("#cmerge-id").val(id);
-    $("#cmerge-module-warning").hide();
-    $("#cmerge-module-perform").show();
-    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
-
-        $.each(metadata[id]['input_shape'], function(index, value){
-            $("#lcolumn-cmerge").append('<option value="' + index + '">' + index + '</option>');
-            $("#rcolumn-cmerge").append('<option value="' + index + '">' + index + '</option>');
-        });
-
-        $("#cmerge-module-warning").hide();
-        $("#cmerge-column-body").show();
-    }else{
-        $("#cmerge-module-warning").show();
-        $("#cmerge-column-body").hide();
-        $("#cmerge-module-perform").hide();
-    }
-    var data = $("#content").flowchart('getData');
-    $("#cmerge-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
-    $("#columnMergeModal").modal();
 }
 
 function showUpdateValue(id){
@@ -952,37 +891,7 @@ function showAggregate(id){
     var data = $("#content").flowchart('getData');
     $("#aggregate-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
     $("#queryAggregateModal").modal();
-}
-
-function showStringExtract(id){
-    $("#string-extract-id").val(id);
-    
-    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
-        $("#string-extract-column").html("");
-        $.each(metadata[id]['input_shape'], function(index, value){
-            $("#string-extract-column").append('<option value="' + index + '">' + index + '</option>');
-        });
-
-        if(metadata[id]['target'] != ''){
-            $("#string-extract-column option:selected").removeAttr("selected");
-            $('#string-extract-column option[value=' + metadata[id]['target'] + ']').attr('selected','selected');
-        }
-
-        if(metadata[id]['delimiter'] != ''){
-            $("#delimiter").val(metadata[id]['delimiter']);
-        }
-
-        $("#string-extract-module-warning").hide();
-        $("#extract-body").show();
-    }else{
-        $("#aggregate-module-warning").show();
-        $("#string-extreact-module-perform").hide();
-        $("#extract-body").hide();
-    }
-    var data = $("#content").flowchart('getData');
-    $("#string-extract-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
-    $("#stringExtractModal").modal();
-}   
+} 
 
 function showFillnaAggregate(id){
     $("#fillna-aggregate-id").val(id);
@@ -1401,20 +1310,6 @@ function performFillnaValueModule(){
     $("#fillnaValueModal").modal('hide');
 }
 
-function stringExtractPerform(){
-    var id = $("#string-extract-id").val();
-    var target = $("#string-extract-column").val();
-    var delimiter = $("#delimiter").val();
-    var new_name = $("#string-extract-name").val();
-    metadata[id]['target'] = target;
-    metadata[id]['delimiter'] = delimiter;
-    metadata[id]['shape'] = metadata[id]['input_shape'];
-    metadata[id]['shape'][new_name] = 'object';
-    var output_feet = $("#string-extract-output-feet").val();
-    remakeOutputFeet(id, output_feet);
-    $("#stringExtractModal").modal('hide');
-}
-
 function performFormulaModule(){
     var id = $("#formula-id").val();
     var formula = $("#formula-input").val();
@@ -1435,21 +1330,6 @@ function performFactorizeModule(){
     var output_feet = $("#factorize-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#factorizeModal").modal('hide');
-}
-
-function performColumnMerge(){
-    var id = $("#cmerge-id").val();
-    var left = $("#lcolumn-cmerge").val();
-    var right = $("#lcolumn-cmerge").val();
-    var n = $("#cmerge-new-name").val();
-    metadata[id]['left'] = left;
-    metadata[id]['right'] = right;
-    metadata[id]['new'] = n;
-    metadata[id]['shape'] = metadata[id]['input_shape'];
-    metadata[id]['shape'][n] = 'object';
-    var output_feet = $("#cmerge-output-feet").val();
-    remakeOutputFeet(id, output_feet);
-    $("#columnMergeModal").modal('hide');
 }
 
 function getMetadata(){

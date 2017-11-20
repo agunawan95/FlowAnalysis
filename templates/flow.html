@@ -85,9 +85,53 @@
                     <br>
                     <input type="text" name="process-search" id="process-search" class="form-control" placeholder="Search ...">
                     <br>
+                    <div id="accordion" role="tablist" aria-multiselectable="true">
+                        <div class="card">
+                            <div class="card-header" role="tab" id="headingOne">
+                                <h6 class="mb-0">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Query
+                                    </a>
+                                </h6>
+                            </div>
+                        
+                            <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+                                <div class="card-block" id="query-content">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" role="tab" id="headingTwo">
+                                <h6 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Tools
+                                    </a>
+                                </h6>
+                            </div>
+                            <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                <div class="card-block" id="tool-content">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" role="tab" id="headingThree">
+                                <h6 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        Chart
+                                    </a>
+                                </h6>
+                            </div>
+                            <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+                                <div class="card-block" id="chart-content">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div id="process-container">
-                        <h5>Modules: </h5>
-                        <hr>
+                        
                     </div>
                 </div>
                 <div class="col-sm-10">
