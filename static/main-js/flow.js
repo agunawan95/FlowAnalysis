@@ -14,7 +14,8 @@ var process_list = [
         background: "bg-success",
         image: "img/query-filter.png",
         name: "Filter Module",
-        type: "query"
+        type: "query",
+        tag: "filter, query"
     },
     {
         id: "cfilter-module",
@@ -22,7 +23,8 @@ var process_list = [
         background: "bg-success",
         image: "img/query-filter.png",
         name: "Column Filter Module",
-        type: "query"
+        type: "query",
+        tag: "column, filter, query"
     },
     {
         id: "delete-module",
@@ -30,7 +32,8 @@ var process_list = [
         background: "bg-danger",
         image: "img/query-delete.png",
         name: "Delete Module",
-        type: "query"
+        type: "query",
+        tag: "delete, query"
     },
     {
         id: "update-module",
@@ -38,7 +41,8 @@ var process_list = [
         background: "bg-warning",
         image: "img/query-update.png",
         name: "Update Column Module",
-        type: "query"
+        type: "query",
+        tag: "update, column, query"
     },
     {
         id: "update-value-module",
@@ -46,7 +50,8 @@ var process_list = [
         background: "bg-warning",
         image: "img/query-update.png",
         name: "Update Column With Value Module",
-        type: "query"
+        type: "query",
+        tag: "update, value, query"
     },
     {
         id: "join-module",
@@ -54,15 +59,17 @@ var process_list = [
         background: "bg-dark",
         image: "img/query-join.png",
         name: "Join Data Module",
-        type: "query"
+        type: "query",
+        tag: "join, merge, query"
     },
     {
-        id: "update-module",
+        id: "append-module",
         process_id: "process:append",
         background: "bg-dark",
         image: "img/query-append.png",
         name: "Append Module",
-        type: "query"
+        type: "query",
+        tag: "append, merge, query"
     },
     {
         id: "aggregate-module",
@@ -70,7 +77,8 @@ var process_list = [
         background: "bg-success",
         image: "img/query-aggregate.png",
         name: "Aggregate Module",
-        type: "query"
+        type: "query",
+        tag: "aggregate, math, query"
     },
     {
         id: "string-extract-module",
@@ -78,7 +86,8 @@ var process_list = [
         background: "bg-dark",
         image: "img/tool-string.png",
         name: "String Extract Module",
-        type: "tool"
+        type: "tool",
+        tag: "string, extract, tool"
     },
     {
         id: "formula-module",
@@ -86,7 +95,8 @@ var process_list = [
         background: "bg-dark",
         image: "img/tool-formula.png",
         name: "Formula Module",
-        type: "tool"
+        type: "tool",
+        tag: "formula, equation, math, tool"
     },
     {
         id: "fillna-aggregate-module",
@@ -94,7 +104,8 @@ var process_list = [
         background: "bg-dark",
         image: "img/tool-fillna.png",
         name: "Fill NA With Aggregate",
-        type: "tool"
+        type: "tool",
+        tag: "fillna, aggregate, tool"
     },
     {
         id: "fillna-oc-module",
@@ -102,7 +113,8 @@ var process_list = [
         background: "bg-dark",
         image: "img/tool-fillna.png",
         name: "Fill NA With Other Column",
-        type: "tool"
+        type: "tool",
+        tag: "fillna, column, tool"
     },
     {
         id: "fillna-value-module",
@@ -110,7 +122,8 @@ var process_list = [
         background: "bg-dark",
         image: "img/tool-fillna.png",
         name: "Fill NA With Value",
-        type: "tool"
+        type: "tool",
+        tag: "fillna, value, tool"
     },
     {
         id: "factorize-module",
@@ -118,7 +131,8 @@ var process_list = [
         background: "bg-dark",
         image: "img/tool-factorize.png",
         name: "Factorize Module",
-        type: "tool"
+        type: "tool",
+        tag: "factorize, transform, tool"
     },
     {
         id: "column-merge-module",
@@ -126,7 +140,8 @@ var process_list = [
         background: "bg-dark",
         image: "img/tool-column-merge.png",
         name: "Column Merge Module",
-        type: "tool"
+        type: "tool",
+        tag: "merge, column, tool"
     },
 ];
 
@@ -189,7 +204,7 @@ $(document).ready(function(){
         $("#process-container").html("");
         for(var i in process_list){
             data = process_list[i];
-            if(data['id'].indexOf(str) >= 0){
+            if(data['tag'].indexOf(str) >= 0){
                 $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
             }
         }
@@ -244,7 +259,6 @@ $(document).ready(function(){
                     data: JSON.stringify({'data': metadata[linkData['fromOperator']]['shape']}),
                     success: function (res) {
                         metadata[linkData['toOperator']]['query_metadata'] = res;
-                        metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
                         metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
                     },
                     dataType: "json"
@@ -255,17 +269,36 @@ $(document).ready(function(){
                 'shape': metadata[linkData['fromOperator']]['shape'],
                 'link_id': linkId
               });
-              metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
+              if(metadata[linkData['toOperator']]['type'] == 'process:append' && metadata[linkData['toOperator']]['input_metadata'].length == 2){
+                var left_data = metadata[linkData['toOperator']]['input_metadata'][0]['shape'];
+                var right_data = metadata[linkData['toOperator']]['input_metadata'][1]['shape'];
+                var same = true;
+            
+                $.each(right_data, function(index, value){
+                    if(!(index in left_data)){
+                        same = false;
+                    }
+                });
+            
+                if(same){
+                    metadata[linkData['toOperator']]['shape'] = left_data;
+                }else{
+                    // Error
+                }
+              }
               // metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
             }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge'){
                 metadata[linkData['toOperator']]['input_shape'] = metadata[linkData['fromOperator']]['shape']; 
             }
+            metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
             return true;
         },
         onLinkDelete: function (linkId, forced) {
             var data = $("#content").flowchart('getData');
             var link = data['links'][linkId];
             if(!(link['toOperator'] in metadata)){
+                var index = metadata[link['fromOperator']]['link'].indexOf(link['toOperator']);
+                metadata[link['fromOperator']]['link'].splice(index, 1);
                 return true;
             }
             if(!(link['fromOperator'] in metadata)){
@@ -1233,8 +1266,8 @@ function performJoinModule(){
         left: left,
         right: right
     };
-    var left_data = metadata[id]['input_metadata'][0]['shape'];
-    var right_data = metadata[id]['input_metadata'][1]['shape'];
+    var left_data = metadata[id]['input_metadata'][0]['shape'].slice();
+    var right_data = metadata[id]['input_metadata'][1]['shape'].slice();
     var final_data = {};
     if(left == right){
         final_data[left] = left_data[left];
@@ -1422,4 +1455,18 @@ function performColumnMerge(){
 function getMetadata(){
     console.log(JSON.stringify(metadata));
     return metadata;
+}
+
+function getSchema(){
+    var data = $("#content").flowchart('getData');
+    console.log(JSON.stringify(data));
+    return data;
+}
+
+function sendData(){
+    var metadata = getMetadata();
+    var schema = getSchema();
+    $.post("/api/run", {metadata: metadata, schema: schema}, function(data){
+
+    });
 }

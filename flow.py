@@ -29,6 +29,8 @@ def file_metadata(id=None):
         df = pd.read_csv('dummy/west_nile.csv')
     elif id == 4:
         df = pd.read_csv('dummy/west_nile_weather.csv')
+    elif id == 5:
+        df = pd.read_csv('dummy/hr-departments.csv')
     return jsonify(df.dtypes.apply(lambda x: x.name).to_dict())
 
 
