@@ -13,6 +13,8 @@ update(df, formulas)
 
 print df[['number_project', 'time_spend_company', 'meong']].head(10)
 
+
+
 res = df.groupby(['department_id', 'salary'])['time_spend_company'].max().reset_index()
 res = res.rename(columns={'time_spend_company': 'avg_time_spend_company'})
 print res

@@ -124,6 +124,15 @@ var process_list = [
         name: "Factorize Module",
         type: "tool",
         tag: "factorize, transform, tool"
+    },
+    {
+        id: "correlation-matrix-module",
+        process_id: "chart:cm",
+        background: "bg-dark",
+        image: "img/chart-corr_matrix.png",
+        name: "Correlation Matrix Module",
+        type: "chart",
+        tag: "correlation, matrix, chart"
     }
 ];
 
@@ -166,6 +175,8 @@ function initDraggable(){
                 fillnaValueProcedure(leftPosition, topPosition);
             }else if(id == "process:factorize"){
                 factorizeProcedure(leftPosition, topPosition);
+            }else if(id == "chart:cm"){
+                correlationMatrixProcedure(leftPosition, topPosition);
             }
         }
     });
@@ -180,11 +191,11 @@ function init_accordion(){
     for(var i in process_list){
         data = process_list[i];
         if(data['type'] == 'query'){
-            $("#query-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
+            $("#query-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 12px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
         }else if(data['type'] == 'tool'){
-            $("#tool-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
+            $("#tool-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 12px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
         }else if(data['type'] == 'chart'){
-            $("#chart-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
+            $("#chart-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 12px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
         }
     }
 }
@@ -197,7 +208,7 @@ $(document).ready(function(){
         for(var i in process_list){
             data = process_list[i];
             if(data['tag'].indexOf(str) >= 0){
-                $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 18px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
+                $("#process-container").append('<div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 12px; margin:0;"> ' + data['name'] + '</p></div></div></div><hr>');
             }
         }
         $("#process-container").show();
@@ -388,13 +399,13 @@ function addOperatorSingleInput(operatorName, left, top){
     return operatorId;
 }
 
-function addModel(modelName){
+function addOutputOperator(operatorName, left, top){
     var operatorId = 'created_operator_' + operatorI;
     var operatorData = {
-        top: 60,
-        left: 500,
+        top: top,
+        left: left,
         properties: {
-            title:  modelName,
+            title:  operatorName,
             outputs: {
 
             },
@@ -409,7 +420,7 @@ function addModel(modelName){
     operatorI++;
 
     $('#content').flowchart('createOperator', operatorId, operatorData);
-
+    return operatorId;
     }
 
 function addOperatorTwoInput(operatorName, left, top){
@@ -599,6 +610,7 @@ function formulaProcedure(left, top){
         name: 'formula',
         input_shape: {},
         formula: "",
+        new_name: "",
         shape: {},
         link: []
     };
@@ -647,6 +659,16 @@ function updateValueProcedure(left, top){
         into: "",
         shape: {},
         link: []
+    };
+    metadata[id] = data;
+}
+
+function correlationMatrixProcedure(left, top){
+    var id = addOutputOperator('Correlation Matrix Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'chart:cm',
+        name: 'cm'
     };
     metadata[id] = data;
 }
@@ -1175,8 +1197,8 @@ function performJoinModule(){
         left: left,
         right: right
     };
-    var left_data = metadata[id]['input_metadata'][0]['shape'].slice();
-    var right_data = metadata[id]['input_metadata'][1]['shape'].slice();
+    var left_data = jQuery.extend(true, {}, metadata[id]['input_metadata'][0]['shape']);
+    var right_data = jQuery.extend(true, {}, metadata[id]['input_metadata'][1]['shape']);
     var final_data = {};
     if(left == right){
         final_data[left] = left_data[left];
@@ -1259,13 +1281,14 @@ function performAggregateModule(){
     if(group_by.includes(",")){
         tmp = group_by.split(",");
         for(var i in tmp){
-            final_data[tmp[i]] = shape[tmp[i]];
+            key = tmp[i];
+            final_data[key] = shape[tmp[i]];
         }
     }else{
         final_data[group_by] = shape[group_by];
     }
 
-    final_data[target] = shape[target];
+    final_data[f + "_" + target] = shape[target];
 
     metadata[id]['shape'] = final_data;
 
@@ -1315,6 +1338,7 @@ function performFormulaModule(){
     var formula = $("#formula-input").val();
     var new_name = $("#formula-column").val();
     metadata[id]['formula'] = formula;
+    metadata[id]['new_name'] = new_name;
     metadata[id]['shape'] = metadata[id]['input_shape'];
     metadata[id]['shape'][new_name] = 'int64';
     var output_feet = $("#formula-output-feet").val();
@@ -1343,10 +1367,31 @@ function getSchema(){
     return data;
 }
 
+function submit_post_via_hidden_form(url, params) {
+    var f = $("<form target='_blank' method='POST' style='display:none;'></form>").attr({
+        action: url
+    }).appendTo(document.body);
+
+    for (var i in params) {
+        if (params.hasOwnProperty(i)) {
+            $('<input type="hidden" />').attr({
+                name: i,
+                value: params[i]
+            }).appendTo(f);
+        }
+    }
+
+    f.submit();
+    f.remove();
+}
+
 function sendData(){
     var metadata = getMetadata();
     var schema = getSchema();
-    $.post("/api/run", {metadata: metadata, schema: schema}, function(data){
-
-    });
+    submit_post_via_hidden_form(
+        '/report',
+        {
+            metadata: JSON.stringify(metadata)
+        }
+    );
 }

@@ -96,7 +96,7 @@
                             </div>
                         
                             <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                                <div class="card-block" id="query-content">
+                                <div class="card-block" id="query-content" style="padding: 5px">
                                     
                                 </div>
                             </div>
@@ -110,7 +110,7 @@
                                 </h6>
                             </div>
                             <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
-                                <div class="card-block" id="tool-content">
+                                <div class="card-block" id="tool-content" style="padding: 5px">
                                     
                                 </div>
                             </div>
@@ -124,7 +124,7 @@
                                 </h6>
                             </div>
                             <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
-                                <div class="card-block" id="chart-content">
+                                <div class="card-block" id="chart-content" style="padding: 5px">
                                     
                                 </div>
                             </div>
@@ -149,7 +149,7 @@
                 <div class="col-sm-6">
                     <h4 class="page-header">Tools: </h4>
                     <button class="btn btn-danger btn-sm" onclick="deleteOperation()"><i class="lnr lnr-cross"></i> Delete Selected</button>
-                    <button class="btn btn-primary btn-sm"><i class="lnr lnr-undo"></i> Execute</button>
+                    <button class="btn btn-primary btn-sm" onclick="sendData()"><i class="lnr lnr-undo"></i> Execute</button>
                     <button class="btn btn-default btn-sm" onclick="testing()"><i class="lnr lnr-star"></i> Testing</button>
                 </div>
                 <div class="col-sm-6">
@@ -808,50 +808,26 @@
             </div>
         </div>
 
-        <!-- Column Merge Module Modal -->
-        <div class="modal" id="columnMergeModal">
+        <!-- Correlation Matrix Modal -->
+        <div class="modal" id="correlationMatrixModal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Column Merge Module</h5>
+                        <h5 class="modal-title">Correlation Matrix Module</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" id="cmerge-id">
-                        <div class="alert alert-warning" id="cmerge-module-warning">
-                            This Module Doesn't Have Input Flow! Please Make One!
-                        </div>
-                        <div id="cmerge-body">
-                            <div class="form-group">
-                                <label for="cmerge-new-name">New Column Name</label>
-                                <input type="text" id="cmerge-new-name" class="form-control" placeholder="New Column Name">
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="lcolumn-cmerge">Left Column: </label>
-                                        <select name="lcolumn-cmerge" id="lcolumn-cmerge" class="form-control"></select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label for="rcolumn-cmerge">Right Column: </label>
-                                        <select name="rcolumn-cmerge" id="rcolumn-cmerge" class="form-control"></select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <label for="cmerge-output-feet">Output Feets: </label>
+                        <input type="hidden" id="cm-id">
+                        <label for="cm-output-feet">Output Feets: </label>
                         <form action="">
-                            <input id="cmerge-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
+                            <input id="cm-output-feet" type="text" class="form-control bfh-number" value="1" min="1" max="5">
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="cmerge-module-perform" onclick="performColumnMerge()"><i class="lnr lnr-pencil"></i> Execute</button>
-                        <button class="btn btn-danger" onclick="deleteModule('cmerge-id', 'columnMergeModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-primary" id="cm-module-perform" onclick="performCorrelationMatrixModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('cm-id', 'correlationMatrixModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>

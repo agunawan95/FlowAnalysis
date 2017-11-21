@@ -1,0 +1,196 @@
+{
+  "created_operator_0": {
+    "id_operation": "created_operator_0",
+    "type": "input",
+    "name": "hr-1.csv",
+    "file_id": "1",
+    "shape": {
+      "Work_accident": "int64",
+      "average_montly_hours": "int64",
+      "department_id": "int64",
+      "last_evaluation": "float64",
+      "left": "int64",
+      "number_project": "int64",
+      "promotion_last_5years": "int64",
+      "salary": "object",
+      "satisfaction_level": "float64",
+      "time_spend_company": "int64"
+    },
+    "link": [
+      "created_operator_2"
+    ]
+  },
+  "created_operator_1": {
+    "id_operation": "created_operator_1",
+    "type": "input",
+    "name": "hr-2.csv",
+    "file_id": "2",
+    "shape": {
+      "Work_accident": "int64",
+      "average_montly_hours": "int64",
+      "department_id": "int64",
+      "last_evaluation": "float64",
+      "left": "int64",
+      "number_project": "int64",
+      "promotion_last_5years": "int64",
+      "salary": "object",
+      "satisfaction_level": "float64",
+      "time_spend_company": "int64"
+    },
+    "link": [
+      "created_operator_2"
+    ]
+  },
+  "created_operator_2": {
+    "id_operation": "created_operator_2",
+    "type": "process:append",
+    "name": "append",
+    "input_metadata": [
+      {
+        "operator": "created_operator_0",
+        "shape": {
+          "Work_accident": "int64",
+          "average_montly_hours": "int64",
+          "department_id": "int64",
+          "last_evaluation": "float64",
+          "left": "int64",
+          "number_project": "int64",
+          "promotion_last_5years": "int64",
+          "salary": "object",
+          "satisfaction_level": "float64",
+          "time_spend_company": "int64"
+        },
+        "link_id": 0
+      },
+      {
+        "operator": "created_operator_1",
+        "shape": {
+          "Work_accident": "int64",
+          "average_montly_hours": "int64",
+          "department_id": "int64",
+          "last_evaluation": "float64",
+          "left": "int64",
+          "number_project": "int64",
+          "promotion_last_5years": "int64",
+          "salary": "object",
+          "satisfaction_level": "float64",
+          "time_spend_company": "int64"
+        },
+        "link_id": 1
+      }
+    ],
+    "shape": {
+      "Work_accident": "int64",
+      "average_montly_hours": "int64",
+      "department_id": "int64",
+      "last_evaluation": "float64",
+      "left": "int64",
+      "number_project": "int64",
+      "promotion_last_5years": "int64",
+      "salary": "object",
+      "satisfaction_level": "float64",
+      "time_spend_company": "int64"
+    },
+    "link": [
+      "created_operator_4"
+    ]
+  },
+  "created_operator_3": {
+    "id_operation": "created_operator_3",
+    "type": "input",
+    "name": "hr-departments.csv",
+    "file_id": "5",
+    "shape": {
+      "department": "object",
+      "department_id": "int64"
+    },
+    "link": [
+      "created_operator_4"
+    ]
+  },
+  "created_operator_4": {
+    "id_operation": "created_operator_4",
+    "type": "process:join",
+    "name": "join",
+    "metadata": {
+      "how": "inner",
+      "left": "department_id",
+      "right": "department_id"
+    },
+    "input_metadata": [
+      {
+        "operator": "created_operator_2",
+        "shape": {
+          "Work_accident": "int64",
+          "average_montly_hours": "int64",
+          "department_id": "int64",
+          "last_evaluation": "float64",
+          "left": "int64",
+          "number_project": "int64",
+          "promotion_last_5years": "int64",
+          "salary": "object",
+          "satisfaction_level": "float64",
+          "time_spend_company": "int64"
+        },
+        "link_id": "2"
+      },
+      {
+        "operator": "created_operator_3",
+        "shape": {
+          "department": "object",
+          "department_id": "int64"
+        },
+        "link_id": "3"
+      }
+    ],
+    "shape": {
+      "department_id": "int64",
+      "Work_accident": "int64",
+      "average_montly_hours": "int64",
+      "last_evaluation": "float64",
+      "left": "int64",
+      "number_project": "int64",
+      "promotion_last_5years": "int64",
+      "salary": "object",
+      "satisfaction_level": "float64",
+      "time_spend_company": "int64",
+      "department": "object"
+    },
+    "link": [
+      "created_operator_5"
+    ]
+  },
+  "created_operator_5": {
+    "id_operation": "created_operator_5",
+    "type": "process:cfilter",
+    "name": "cfilter",
+    "input_shape": {
+      "department_id": "int64",
+      "Work_accident": "int64",
+      "average_montly_hours": "int64",
+      "last_evaluation": "float64",
+      "left": "int64",
+      "number_project": "int64",
+      "promotion_last_5years": "int64",
+      "salary": "object",
+      "satisfaction_level": "float64",
+      "time_spend_company": "int64",
+      "department": "object"
+    },
+    "shape": {
+      "department_id": "int64",
+      "Work_accident": "int64",
+      "average_montly_hours": "int64",
+      "last_evaluation": "float64",
+      "left": "int64",
+      "number_project": "int64",
+      "promotion_last_5years": "int64",
+      "satisfaction_level": "float64",
+      "time_spend_company": "int64",
+      "department": "object"
+    },
+    "link": [
+      
+    ]
+  }
+}

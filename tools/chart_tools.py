@@ -8,9 +8,9 @@ from pandas.plotting import *
 
 class ChartTools(tools.Tools):
 
-    def corr_matrix_chart(self, title):
+    def corr_matrix_chart(self):
         plt.matshow(self.df.corr())
-        plt.title(title)
+        plt.title("Correlation Matrix")
 
         return self.convert_base64(plt)
 
@@ -42,4 +42,9 @@ class ChartTools(tools.Tools):
         figdata_png = base64.b64encode(figfile.getvalue())
         return "data:image/png;base64," + figdata_png.decode('utf8')
 
+
+tools = ChartTools()
+tools.set_file("hr-1.csv")
+print tools.data_frame()
+print tools.box_plot(['satisfaction_level', 'last_evaluation', 'number_project'])
 

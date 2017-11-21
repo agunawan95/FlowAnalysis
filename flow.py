@@ -90,6 +90,10 @@ def generate_query_metadata():
             res.append(tmp)
     return jsonify(res)
 
+@app.route("/report", methods=['POST'])
+def report():
+    metadata = request.form['metadata']
+    return render_template("report.html", metadata=metadata)
 
 if __name__ == '__main__':
     app.run(debug=True)

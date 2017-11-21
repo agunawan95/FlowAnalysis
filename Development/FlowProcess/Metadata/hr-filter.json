@@ -1,0 +1,109 @@
+{
+  "created_operator_0": {
+    "id_operation": "created_operator_0",
+    "type": "input",
+    "name": "hr-1.csv",
+    "file_id": "1",
+    "shape": {
+      "Work_accident": "int64",
+      "average_montly_hours": "int64",
+      "department_id": "int64",
+      "last_evaluation": "float64",
+      "left": "int64",
+      "number_project": "int64",
+      "promotion_last_5years": "int64",
+      "salary": "object",
+      "satisfaction_level": "float64",
+      "time_spend_company": "int64"
+    },
+    "link": [
+      "created_operator_1"
+    ]
+  },
+  "created_operator_1": {
+    "id_operation": "created_operator_1",
+    "type": "process:filter",
+    "name": "filter",
+    "query": {
+      "condition": "AND",
+      "rules": [
+        {
+          "id": "left",
+          "field": "left",
+          "type": "integer",
+          "input": "number",
+          "operator": "equal",
+          "value": "1"
+        }
+      ],
+      "valid": true
+    },
+    "query_metadata": [
+      {
+        "id": "salary",
+        "label": "salary",
+        "type": "string"
+      },
+      {
+        "id": "promotion_last_5years",
+        "label": "promotion_last_5years",
+        "type": "integer"
+      },
+      {
+        "id": "Work_accident",
+        "label": "Work_accident",
+        "type": "integer"
+      },
+      {
+        "id": "satisfaction_level",
+        "label": "satisfaction_level",
+        "type": "double"
+      },
+      {
+        "id": "average_montly_hours",
+        "label": "average_montly_hours",
+        "type": "integer"
+      },
+      {
+        "id": "last_evaluation",
+        "label": "last_evaluation",
+        "type": "double"
+      },
+      {
+        "id": "number_project",
+        "label": "number_project",
+        "type": "integer"
+      },
+      {
+        "id": "left",
+        "label": "left",
+        "type": "integer"
+      },
+      {
+        "id": "time_spend_company",
+        "label": "time_spend_company",
+        "type": "integer"
+      },
+      {
+        "id": "department_id",
+        "label": "department_id",
+        "type": "integer"
+      }
+    ],
+    "shape": {
+      "Work_accident": "int64",
+      "average_montly_hours": "int64",
+      "department_id": "int64",
+      "last_evaluation": "float64",
+      "left": "int64",
+      "number_project": "int64",
+      "promotion_last_5years": "int64",
+      "salary": "object",
+      "satisfaction_level": "float64",
+      "time_spend_company": "int64"
+    },
+    "link": [
+      
+    ]
+  }
+}
