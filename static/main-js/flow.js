@@ -870,6 +870,7 @@ function showColumnFilter(id){
             }
         });
         $("#column-filter-module-warning").hide();
+        $("#column-filter-module-perform").hide();
     }else{
         $("#column-filter-module-warning").show();
         $("#column-filter-module-perform").hide();

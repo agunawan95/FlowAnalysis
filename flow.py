@@ -3,6 +3,9 @@ from datetime import datetime
 import os
 from werkzeug.utils import secure_filename
 import pandas as pd
+import json
+
+import tools.FlowProcess as fp
 
 app = Flask(__name__)
 
@@ -92,8 +95,30 @@ def generate_query_metadata():
 
 @app.route("/report", methods=['POST'])
 def report():
-    metadata = request.form['metadata']
+    metadata = str(request.form['metadata']).encode('utf8')
     return render_template("report.html", metadata=metadata)
+
+@app.route("/api/run", methods=['POST'])
+def run():
+    metadata = json.loads(request.form['metadata'])
+    tools = fp.FlowProcess()
+    tools.set_metadata(metadata)
+    tools.run()
+    data = tools.get_current_data()
+    chart = tools.get_chart()
+    data_tables = []
+    co = 1
+    for key, value in data.iteritems():
+        data_tables.append({
+            'count': co,
+            'table': value['data'].head(10).to_html(classes='table table-hover')
+        })
+        co += 1
+    return jsonify({
+        'data': data_tables,
+        'chart': chart
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True)

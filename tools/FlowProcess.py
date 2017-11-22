@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import query_tools as qt
+import chart_tools as ct
 
 
 class FlowProcess:
@@ -79,7 +80,7 @@ class FlowProcess:
             current = self.process[0]
             if current['type'] == 'input':
                 # Todo Change Input Condition
-                df = pd.read_csv("Data/" + str(current['name']))
+                df = pd.read_csv("dummy/" + str(current['name']))
                 count = 1
                 if len(current['link']) > 0:
                     count = len(current['link'])
@@ -312,16 +313,23 @@ class FlowProcess:
                 }
                 self.generate_next_bfs(current)
                 self.id += 1
+            elif current['type'] == 'chart:cm':
+                tools = ct.ChartTools()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                title = "Correlation Matrix"
+                img = tools.corr_matrix_chart(title)
+                data = {
+                    'title': title,
+                    'img': img
+                }
+                self.chart.append(data)
             self.process.pop(0)
 
     def get_current_data(self):
         return self.shared_resource
 
+    def get_chart(self):
+        return self.chart
 
-fp = FlowProcess()
-with open('Metadata/hr-test.json') as data_file:
-    metadata = json.load(data_file)
-fp.set_metadata(metadata)
-fp.run()
-tmp = fp.get_current_data()[5]['data']
-tmp.to_csv("meong.csv")
+

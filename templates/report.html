@@ -1,8 +1,119 @@
-<html>
+<!doctype html>
+<html lang="en">
     <head>
-        <title>aaa</title>
+        <title>Workspace</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+        <!-- Linear Icon CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='linear/style.css') }}">
+
+        <!-- Flow -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.flowchart.min.css') }}">
+
+        <!-- Intro JS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/introjs.css') }}">
+
+        <!-- Query Builder -->
+        <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/query-builder.default.min.css') }}"> -->
+
+        <!-- Form Helper -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrapformhelpers/css/bootstrap-formhelpers.min.css') }}">
+
+        <!-- Halfling -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/glyphicons-halflings.css') }}">
+
+        <!-- Bootstrap Select -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
+        <!-- Multiselect -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='select2/select2.css') }}">
+
+        <!-- Custom Scrollbar -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='custom-scroll/jquery.mCustomScrollbar.css') }}">
+
+        <!--Query Builder Package -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/examples/bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/examples/bower_components/selectize/dist/css/selectize.bootstrap3.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/dist/css/query-builder.default.css') }}" id="qb-theme">
+        <!--End of Query Builder Package -->
     </head>
     <body>
-        {{ metadata }}
+    
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <hr> 
+                    <div  class="text-center">
+                        <h1>Report</h1>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2><img src="{{ url_for('static', filename='img/data.png') }}" alt="" style="width: 32px; margin-bottom: 9px;"> Data</h2>
+                    <div id="table-list" style="overflow-x: scroll"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <hr>
+                    <h2><img src="{{ url_for('static', filename='img/chart.png') }}" alt="" style="width: 32px; margin-bottom: 9px;"> Chart</h2>
+                    <div id="chart-list" style="overflow-x: scroll"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <hr>
+                    <h2><img src="{{ url_for('static', filename='img/cube.png') }}" alt="" style="width: 32px; margin-bottom: 9px;"> Model</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
+        <!-- <script src="{{ url_for('static', filename='query-builder/bower_components/jquery/dist/jquery.js') }}"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script src="{{ url_for('static', filename='js/intro.js') }}"></script>
+
+        <style>
+            .ui-autocomplete { z-index:2147483647; }
+        </style>
+
+        <!-- <script src="{{ url_for('static', filename='js/doT.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/jQuery.extendext.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/query-builder.min.js') }}"></script> -->
+
+        <script src="{{ url_for('static', filename='bootstrapformhelpers/js/bootstrap-formhelpers.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
+        <script>
+            $(document).ready(function(){
+                var metadata = {{ metadata | safe }};
+                console.log(JSON.stringify(metadata));
+                $.post("/api/run", {metadata: JSON.stringify(metadata)}, function(res){
+                    console.log(JSON.stringify(res));
+                    res['data'].forEach(element => {
+                        $("#table-list").append(element['table']);
+                    });
+                    res['chart'].forEach(element => {
+                        $("#chart-list").append('<img src="' + element['img'] + '">');
+                    });
+                });
+            });
+        </script>
+
     </body>
 </html>

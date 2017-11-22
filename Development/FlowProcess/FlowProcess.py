@@ -334,10 +334,21 @@ class FlowProcess:
 
 
 fp = FlowProcess()
-with open('Metadata/hr-correlation.json') as data_file:
+with open('Metadata/hr-with-corrmatrix.json') as data_file:
     metadata = json.load(data_file)
 fp.set_metadata(metadata)
 fp.run()
+print len(fp.get_current_data())
 print fp.get_current_data()
 print fp.get_chart()
 
+data = fp.get_current_data()
+data_tables = []
+co = 1
+for key, value in data.iteritems():
+    data_tables.append({
+        'count': co,
+        'table': value['data'].head(10).to_html(classes='table table-hover')
+    })
+    co += 1
+print len(data_tables)
