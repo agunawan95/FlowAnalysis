@@ -334,7 +334,7 @@ class FlowProcess:
 
 
 fp = FlowProcess()
-with open('Metadata/hr-with-corrmatrix.json') as data_file:
+with open('Metadata/hr-testing-bug.json') as data_file:
     metadata = json.load(data_file)
 fp.set_metadata(metadata)
 fp.run()

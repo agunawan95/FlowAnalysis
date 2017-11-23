@@ -4,6 +4,7 @@ import os
 from werkzeug.utils import secure_filename
 import pandas as pd
 import json
+import base64
 
 import tools.FlowProcess as fp
 
@@ -93,10 +94,12 @@ def generate_query_metadata():
             res.append(tmp)
     return jsonify(res)
 
+
 @app.route("/report", methods=['POST'])
 def report():
     metadata = str(request.form['metadata']).encode('utf8')
     return render_template("report.html", metadata=metadata)
+
 
 @app.route("/api/run", methods=['POST'])
 def run():
@@ -111,13 +114,24 @@ def run():
     for key, value in data.iteritems():
         data_tables.append({
             'count': co,
-            'table': value['data'].head(10).to_html(classes='table table-hover')
+            'table': value['data'].head(10).to_html(classes='table table-hover table-bordered')
         })
         co += 1
     return jsonify({
         'data': data_tables,
         'chart': chart
     })
+
+
+@app.route('/api/downloadbase64', methods=['POST'])
+def downloadbase64():
+    data = request.form['img']
+    data = data.replace('data:image/png;base64,', '')
+    img = base64.b64decode(data)
+    response = make_response(img)
+    response.headers['Content-Type'] = 'image/jpeg'
+    response.headers['Content-Disposition'] = 'attachment; filename=img.jpg'
+    return response
 
 
 if __name__ == '__main__':

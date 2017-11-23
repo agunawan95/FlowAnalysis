@@ -10,6 +10,7 @@ class FlowProcess:
     process = []
     memo = []
     shared_resource = {}
+    last_resource = None
 
     # id
     id = 0
@@ -19,7 +20,14 @@ class FlowProcess:
     model = []
 
     def __init__(self):
+        self.metadata = None
+        self.process = []
+        self.memo = []
+        self.shared_resource = {}
+        self.last_resource = None
         self.id = 0
+        self.chart = []
+        self.model = []
 
     def set_metadata(self, metadata):
         '''
@@ -57,6 +65,7 @@ class FlowProcess:
             input = self.shared_resource[current['shared_input_resource'][0]]['data']
             self.shared_resource[current['shared_input_resource'][0]]['count'] -= 1
             if self.shared_resource[current['shared_input_resource'][0]]['count'] <= 0:
+                self.last_resource = self.shared_resource[current['shared_input_resource'][0]]
                 del self.shared_resource[current['shared_input_resource'][0]]
             return input
         elif mode == 2:
@@ -67,9 +76,12 @@ class FlowProcess:
             self.shared_resource[current['shared_input_resource'][1]]['count'] -= 1
 
             if self.shared_resource[current['shared_input_resource'][0]]['count'] <= 0:
+                self.last_resource = self.shared_resource[current['shared_input_resource'][0]]
                 del self.shared_resource[current['shared_input_resource'][0]]
             if self.shared_resource[current['shared_input_resource'][1]]['count'] <= 0:
+                self.last_resource = self.shared_resource[current['shared_input_resource'][1]]
                 del self.shared_resource[current['shared_input_resource'][1]]
+
             return left, right
         else:
             return None
@@ -325,11 +337,12 @@ class FlowProcess:
                 }
                 self.chart.append(data)
             self.process.pop(0)
+        if len(self.shared_resource) == 0:
+            self.shared_resource[self.id] = self.last_resource
+            self.id += 1
 
     def get_current_data(self):
         return self.shared_resource
 
     def get_chart(self):
         return self.chart
-
-
