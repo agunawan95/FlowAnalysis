@@ -3,6 +3,8 @@ import json
 import time
 import query_tools as qt
 import chart_tools as ct
+import numpy as np
+import matplotlib.pyplot as plt
 import sklearn.tree as tree
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import train_test_split
@@ -369,6 +371,16 @@ class FlowProcess:
                     }
                     support_metadata[key] = d
                 cv = cross_val_score(dt, x, y, cv=10)
+                performance = cv
+                objects = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                y_pos = np.arange(len(objects))
+                plt.bar(y_pos, performance, align='center', alpha=0.5)
+                plt.xticks(y_pos, objects)
+                plt.ylabel('Accuracy')
+                plt.xlabel('Fold')
+                plt.title('Decision Tree Cross Validation, 10 Fold')
+                tools = ct.ChartTools()
+                p = tools.convert_base64(plt)
                 res = {
                     "name": "Decision Tree",
                     "cv": cv,
@@ -376,7 +388,9 @@ class FlowProcess:
                     "error": cv.std() * 2,
                     "time": end - start,
                     "support": support_metadata,
-                    "score": score
+                    "score": score,
+                    "cv_plot": p,
+                    "total_test_data": total_data
                 }
                 self.model.append(res)
             self.process.pop(0)
