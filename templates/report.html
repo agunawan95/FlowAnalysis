@@ -47,7 +47,12 @@
         <!--End of Query Builder Package -->
     </head>
     <body>
-    
+        <style>
+            strong{
+                font-weight: bold;
+                color: black;
+            }
+        </style>
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
@@ -83,11 +88,17 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-2">
-
-                </div>
-                <div class="col-sm-8">
+                <div class="col-sm-12">
                     <div id="model-list"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="text-center">
+                        <hr>
+                        <p>2017 Stardust</p>
+                        <hr>
+                    </div>
                 </div>
             </div>
         </div>
@@ -123,6 +134,9 @@
                     });
                     res['chart'].forEach(element => {
                         $("#chart-list").append('<div class="row"><div class="col-sm-12"><div class="text-center"><div class="card"><img src="' + element['img'] + '" alt="Card image" class="img-responsive"><div class="card-footer text-muted"><div class="text-right"><a href="' + element['img'] + '" download="filename.jpg" class="btn btn-primary btn-sm"><i class="lnr lnr-download"></i></a>&nbsp;<button class="btn btn-success btn-sm"><i class="lnr lnr-checkmark-circle"></i> Save</button></div></div></div></div></div></div>');
+                    });
+                    res['model_html'].forEach(element => {
+                        $("#model-list").append(element);
                     });
                 });
             });

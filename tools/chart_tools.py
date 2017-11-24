@@ -11,7 +11,6 @@ class ChartTools(tools.Tools):
     def corr_matrix_chart(self, title):
         plt.matshow(self.df.corr())
         plt.title(title)
-
         return self.convert_base64(plt)
 
     def scatter_plot(self, x, y):
@@ -41,5 +40,7 @@ class ChartTools(tools.Tools):
         figfile.seek(0)
         figdata_png = base64.b64encode(figfile.getvalue())
         return "data:image/png;base64," + figdata_png.decode('utf8')
-
+    
+    def clear_chart():
+        plt.close()
 

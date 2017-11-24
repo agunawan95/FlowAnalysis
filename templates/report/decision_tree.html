@@ -1,0 +1,58 @@
+<div class="model">
+    <div class="row">
+        <div class="col-sm-12">
+            <br>
+            <h3>{{ data.name }}</h3>
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="text-center">
+                <img src="{{ data.cv_plot }}" alt="">
+                <hr>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-9">
+            <label for="">Testing Accuracy <strong>({{ data.score * 100 }}%)</strong>: </label>
+            <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ data.score * 100 }}%" aria-valuenow="{{ data.score }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <br>
+            <label for="">Validation Accuracy <strong>({{ data.accuracy * 100 }}%)</strong>: </label>
+            <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ data.accuracy * 100 }}%" aria-valuenow="{{ data.accuracy }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <h6>Standart Deviation</h6>
+            <h3>{{ data.error }}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <br>
+            <h3>Support</h3>
+            <hr>
+            {% for key, value in data.support.iteritems() %}
+                <label for="">Class: {{ key }} <strong>({{ value.psupport }}%) </strong></label>
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ value.psupport }}%" aria-valuenow="{{ data.sup }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <br>
+            {% endfor %}
+            <br>
+            <h3>Confidence</h3>
+            <hr>
+            {% for key, value in data.support.iteritems() %}
+                <label for="">Class: {{ key }} <strong>({{ value.pconf }}%) </strong></label>
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ value.pconf }}%" aria-valuenow="{{ data.pconf }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <br>
+            {% endfor %}
+        </div>
+    </div>
+</div>

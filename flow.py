@@ -118,10 +118,14 @@ def run():
             'table': value['data'].head(10).to_html(classes='table table-hover table-bordered')
         })
         co += 1
+    model_html = []
+    for val in model:
+        model_html.append(render_template("report/decision_tree.html", data=val))
     return jsonify({
         'data': data_tables,
         'chart': chart,
-        'model': model
+        'model': model,
+        'model_html': model_html
     })
 
 

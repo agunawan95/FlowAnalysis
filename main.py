@@ -433,8 +433,6 @@ def add_files():
             "err": 1,
             "msg": "No Selected File"
         })
-    
-    
 
     if file and allowed_file(file.filename):
         file_helper = fl.Files()

@@ -366,14 +366,17 @@ class FlowProcess:
                 for key, value in summary.iteritems():
                     tmp = support_table.groupby('real').sum()['correct'][key]
                     d = {
-                        'count': value,
-                        'conf': tmp  
+                        'count': float(value),
+                        'conf': float(tmp),
+                        'psupport': float(value) / total_data * 100, 
+                        'pconf': float(tmp) / value * 100  
                     }
                     support_metadata[key] = d
                 cv = cross_val_score(dt, x, y, cv=10)
                 performance = cv
                 objects = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                 y_pos = np.arange(len(objects))
+                plt.clf()
                 plt.bar(y_pos, performance, align='center', alpha=0.5)
                 plt.xticks(y_pos, objects)
                 plt.ylabel('Accuracy')
@@ -383,14 +386,14 @@ class FlowProcess:
                 p = tools.convert_base64(plt)
                 res = {
                     "name": "Decision Tree",
-                    "cv": cv,
-                    "accuracy": cv.mean(),
-                    "error": cv.std() * 2,
+                    "cv": cv.tolist(),
+                    "accuracy": float(cv.mean()),
+                    "error": float(cv.std() * 2),
                     "time": end - start,
                     "support": support_metadata,
                     "score": score,
                     "cv_plot": p,
-                    "total_test_data": total_data
+                    "total_test_data": int(total_data)
                 }
                 self.model.append(res)
             self.process.pop(0)
