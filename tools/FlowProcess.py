@@ -1,7 +1,13 @@
 import pandas as pd
 import json
+import time
 import query_tools as qt
 import chart_tools as ct
+import numpy as np
+import matplotlib.pyplot as plt
+import sklearn.tree as tree
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import train_test_split
 
 
 class FlowProcess:
@@ -336,6 +342,57 @@ class FlowProcess:
                     'img': img
                 }
                 self.chart.append(data)
+            elif current['type'] == 'model:dt':
+                input = self.extract_input(current, 1)
+                clf = tree.DecisionTreeClassifier()
+                x = input.drop(current['target'], axis=1)
+                y = input[current['target']]
+                x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=42)
+                summary = y_test.value_counts()
+                support = {}
+                total_data = 0
+                for key, value in summary.iteritems():
+                    support[key] = value
+                    total_data += int(value)
+                clf = tree.DecisionTreeClassifier()
+                start = time.clock()
+                dt = clf.fit(x_train, y_train)
+                end = time.clock()
+                score = dt.score(x_test, y_test)
+                support_table = pd.DataFrame({"real": y_test, "predict": clf.predict(x_test)})
+                support_table['correct'] = support_table['predict'] == support_table['real']
+                support_table['correct'] = support_table['correct'].apply(int)
+                support_metadata = {}
+                for key, value in summary.iteritems():
+                    tmp = support_table.groupby('real').sum()['correct'][key]
+                    d = {
+                        'count': value,
+                        'conf': tmp  
+                    }
+                    support_metadata[key] = d
+                cv = cross_val_score(dt, x, y, cv=10)
+                performance = cv
+                objects = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                y_pos = np.arange(len(objects))
+                plt.bar(y_pos, performance, align='center', alpha=0.5)
+                plt.xticks(y_pos, objects)
+                plt.ylabel('Accuracy')
+                plt.xlabel('Fold')
+                plt.title('Decision Tree Cross Validation, 10 Fold')
+                tools = ct.ChartTools()
+                p = tools.convert_base64(plt)
+                res = {
+                    "name": "Decision Tree",
+                    "cv": cv,
+                    "accuracy": cv.mean(),
+                    "error": cv.std() * 2,
+                    "time": end - start,
+                    "support": support_metadata,
+                    "score": score,
+                    "cv_plot": p,
+                    "total_test_data": total_data
+                }
+                self.model.append(res)
             self.process.pop(0)
         if len(self.shared_resource) == 0:
             self.shared_resource[self.id] = self.last_resource
@@ -346,3 +403,6 @@ class FlowProcess:
 
     def get_chart(self):
         return self.chart
+
+    def get_model(self):
+        return self.model

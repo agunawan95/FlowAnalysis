@@ -109,6 +109,7 @@ def run():
     tools.run()
     data = tools.get_current_data()
     chart = tools.get_chart()
+    model = tools.get_model()
     data_tables = []
     co = 1
     for key, value in data.iteritems():
@@ -119,7 +120,8 @@ def run():
         co += 1
     return jsonify({
         'data': data_tables,
-        'chart': chart
+        'chart': chart,
+        'model': model
     })
 
 

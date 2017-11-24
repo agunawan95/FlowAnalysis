@@ -1,0 +1,42 @@
+<div class="model">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>{{ data.name }}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="text-center">
+                <img src="{{ data.cv_plot }}" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10">
+            <label for="">Testing Accuracy: </label>
+            <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ data.score }}%" aria-valuenow="{{ data.score }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <label for="">Validation Accuracy: </label>
+            <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ data.accuracy }}%" aria-valuenow="{{ data.accuracy }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <h6>Standart Deviation</h6>
+            <h3>{{ data.error }}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Support</h3>
+            <hr>
+            {% for key, value in data.support.iteritems() %}
+                <label for="">Class: {{ key }} </label>
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ data.accuracy }}%" aria-valuenow="{{ data.accuracy }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

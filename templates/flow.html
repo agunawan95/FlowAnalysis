@@ -129,7 +129,22 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="card">
+                            <div class="card-header" role="tab" id="headingFour">
+                                <h6 class="mb-0">
+                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseThree">
+                                        Model
+                                    </a>
+                                </h6>
+                            </div>
+                            <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingFour">
+                                <div class="card-block" id="model-content" style="padding: 5px">
+                                    
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                     <div id="process-container">
                         
                     </div>
@@ -828,6 +843,34 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="cm-module-perform" onclick="performCorrelationMatrixModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
                         <button class="btn btn-danger" onclick="deleteModule('cm-id', 'correlationMatrixModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decision Tree Modal -->
+        <div class="modal" id="decisionTreeModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Decision Tree Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="dt-id">
+                        <div id="dt-body">
+                            <div class="form-group">
+                                <label for="target">Target: </label>
+                                <select name="dt-target" id="dt-target" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="dt-module-perform" onclick="performDecisionTreeModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('dt-id', 'decisionTreeModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
