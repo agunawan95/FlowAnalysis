@@ -133,6 +133,15 @@ var process_list = [
         name: "Correlation Matrix Module",
         type: "chart",
         tag: "correlation, matrix, chart"
+    },
+    {
+        id: "decision-tree-module",
+        process_id: "model:dt",
+        background: "bg-dark",
+        image: "img/model-tree.png",
+        name: "Decision Tree Module",
+        type: "model",
+        tag: "decision, tree, model"
     }
 ];
 
@@ -177,6 +186,8 @@ function initDraggable(){
                 factorizeProcedure(leftPosition, topPosition);
             }else if(id == "chart:cm"){
                 correlationMatrixProcedure(leftPosition, topPosition);
+            }else if(id == "model:dt"){
+                decisionTreeProcedure(leftPosition, topPosition);
             }
         }
     });
@@ -196,6 +207,8 @@ function init_accordion(){
             $("#tool-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 12px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
         }else if(data['type'] == 'chart'){
             $("#chart-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 12px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
+        }else if(data['type'] == 'model'){
+            $("#model-content").append('<br><div class="card text-white ' + data['background'] + ' draggable" id="' + data['id'] + '" data-process="' + data['process_id'] + '"><div class="card-body"><div class="text-center"><img src="/static/' + data['image'] + '" alt="" width="32"><p style="font-size: 12px; margin:0;"> ' + data['name'] + '</p></div></div></div>');
         }
     }
 }
@@ -251,6 +264,8 @@ $(document).ready(function(){
                 showUpdateQuery(operatorId);
             }else if (metadata[operatorId]['type'] == 'process:update-value'){
                 showUpdateValue(operatorId);
+            }else if(metadata[operatorId]['type'] == 'model:dt'){
+                showDecisionTreeModule(operatorId);
             }
             return true;
         },
@@ -291,7 +306,7 @@ $(document).ready(function(){
                 }
               }
               // metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
-            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge'){
+            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge' || metadata[linkData['toOperator']]['type'] == 'model:dt'){
                 metadata[linkData['toOperator']]['input_shape'] = metadata[linkData['fromOperator']]['shape']; 
             }
             metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
@@ -323,7 +338,7 @@ $(document).ready(function(){
                 if(metadata[link['toOperator']]['type'] == 'process:join'){
                     link['toOperator']['metadata'] = {};
                 }
-            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize' || metadata[link['toOperator']]['type'] == 'process:cmerge'){
+            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize' || metadata[link['toOperator']]['type'] == 'process:cmerge' || metadata[link['toOperator']]['type'] == 'model:dt'){
                 metadata[link['toOperator']]['input_shape'] = {};
             }
             metadata[link['toOperator']]['shape'] = {};
@@ -669,6 +684,18 @@ function correlationMatrixProcedure(left, top){
         id_operation: id,
         type: 'chart:cm',
         name: 'cm'
+    };
+    metadata[id] = data;
+}
+
+function decisionTreeProcedure(left, top){
+    var id = addOutputOperator('Decision Tree Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'model:dt',
+        name: 'dt',
+        input_shape: {},
+        target: ""
     };
     metadata[id] = data;
 }
@@ -1081,6 +1108,25 @@ function showFactorizeModule(id){
     $("#factorizeModal").modal();
 }
 
+function showDecisionTreeModule(id){
+    $("#dt-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#dt-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#dt-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#dt-module-warning").hide();
+        $("#dt-body").show();
+    }else{
+        $("#dt-module-warning").show();
+        $("#dt-module-perform").hide();
+        $("#dt-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#dt-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#decisionTreeModal").modal();
+}
+
 function remakeOutputFeet(id, output_feet){
   var data = $('#content').flowchart('getData');
   var new_feet = {};
@@ -1098,7 +1144,7 @@ function remakeOutputFeet(id, output_feet){
   });
   data['operators'][id]['properties']['outputs'] = new_feet;
   tmp_metadata = metadata[id];
-  if(tmp_metadata['type'] == 'process:join'){
+  if(tmp_metadata['type'] == 'process:join' || tmp_metadata['type'] == 'process:append'){
       tmp_metadata['input_metadata'] = [];
   }
   $('#content').flowchart('deleteOperator', id);
@@ -1355,6 +1401,16 @@ function performFactorizeModule(){
     var output_feet = $("#factorize-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#factorizeModal").modal('hide');
+}
+
+function performDecisionTreeModule(){
+    var id = $("#dt-id").val();
+    var target = $("#dt-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#dt-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#decisionTreeModal").modal('hide');
 }
 
 function getMetadata(){

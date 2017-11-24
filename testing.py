@@ -1,13 +1,14 @@
 import tools.FlowProcess as fp
 import json
 
-with open('Development/FlowProcess/Metadata/hr-testing-bug.json') as data_file:
+with open('Development/FlowProcess/Metadata/hr-model.json') as data_file:
     metadata = json.load(data_file)
 tools = fp.FlowProcess()
 tools.set_metadata(metadata)
 tools.run()
 data = tools.get_current_data()
 chart = tools.get_chart()
+model = tools.get_model()
 data_tables = []
 co = 1
 for key, value in data.iteritems():
@@ -19,5 +20,6 @@ for key, value in data.iteritems():
 
 print {
     'data': data_tables,
-    'chart': chart
+    'chart': chart,
+    'model': model
 }
