@@ -122,7 +122,7 @@ def run():
     for val in model:
         model_html.append(render_template("report/decision_tree.html", data=val))
     return jsonify({
-        'data': data_tables,
+        'data_html': render_template('report/data_list.html', data=data_tables),
         'chart': chart,
         'model': model,
         'model_html': model_html

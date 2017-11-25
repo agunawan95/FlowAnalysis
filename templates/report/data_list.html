@@ -1,0 +1,15 @@
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" role="tablist">
+    {% for value in data %}
+        <li class="nav-item"><a href="#data-{{ value.count }}" class="nav-link active" aria-controls="data-{{ value.count }}" role="tab" data-toggle="tab">data-{{ value.count }}</a></li>
+    {% endfor %}
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+    {% for value in data %}
+        <div role="tabpanel" class="tab-pane active" id="data-{{ value.count }}">
+            {{ value.table | safe }}
+        </div>
+    {% endfor %}
+</div>

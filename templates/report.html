@@ -122,22 +122,57 @@
 
         <script src="{{ url_for('static', filename='bootstrapformhelpers/js/bootstrap-formhelpers.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+        
+        <script src="{{ url_for('static', filename='ios-loader/js/spin.min.js') }}"></script>        
+        <script src="{{ url_for('static', filename='ios-loader/js/iosOverlay.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='ios-loader/css/iosOverlay.css') }}">
+        
 
         <script>
             $(document).ready(function(){
+                var opts = {
+                    lines: 13, // The number of lines to draw
+                    length: 11, // The length of each line
+                    width: 5, // The line thickness
+                    radius: 17, // The radius of the inner circle
+                    corners: 1, // Corner roundness (0..1)
+                    rotate: 0, // The rotation offset
+                    color: '#FFF', // #rgb or #rrggbb
+                    speed: 1, // Rounds per second
+                    trail: 60, // Afterglow percentage
+                    shadow: false, // Whether to render a shadow
+                    hwaccel: false, // Whether to use hardware acceleration
+                    className: 'spinner', // The CSS class to assign to the spinner
+                    zIndex: 2e9, // The z-index (defaults to 2000000000)
+                    top: 'auto', // Top position relative to parent in px
+                    left: 'auto' // Left position relative to parent in px
+                };
+
+                var target = document.createElement("div");
+                document.body.appendChild(target);
+                var spinner = new Spinner(opts).spin(target);
+                var overlay = iosOverlay({
+                    text: "Loading",
+                    spinner: spinner
+                });
                 var metadata = {{ metadata | safe }};
                 console.log(JSON.stringify(metadata));
                 $.post("/api/run", {metadata: JSON.stringify(metadata)}, function(res){
                     console.log(JSON.stringify(res));
-                    res['data'].forEach(element => {
-                        $("#table-list").append(element['table']);
-                    });
+                    $("#table-list").append(res['data_html']);
                     res['chart'].forEach(element => {
                         $("#chart-list").append('<div class="row"><div class="col-sm-12"><div class="text-center"><div class="card"><img src="' + element['img'] + '" alt="Card image" class="img-responsive"><div class="card-footer text-muted"><div class="text-right"><a href="' + element['img'] + '" download="filename.jpg" class="btn btn-primary btn-sm"><i class="lnr lnr-download"></i></a>&nbsp;<button class="btn btn-success btn-sm"><i class="lnr lnr-checkmark-circle"></i> Save</button></div></div></div></div></div></div>');
                     });
                     res['model_html'].forEach(element => {
                         $("#model-list").append(element);
                     });
+                    overlay.update({
+                        text: "Success!",
+                        icon: "{{ url_for('static', filename='ios-loader/img/check.png') }}"
+                    });
+                    window.setTimeout(function(){
+                        overlay.hide();
+                    }, 50);
                 });
             });
 
