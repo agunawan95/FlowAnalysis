@@ -9,7 +9,22 @@
 <div class="tab-content">
     {% for value in data %}
         <div role="tabpanel" class="tab-pane active" id="data-{{ value.count }}">
+            <br>
+            <h4>Data</h4>
+            <hr>
             {{ value.table | safe }}
+            {% if value.describe_numeric != '' %}
+                <br>
+                <h4>Data Numeric Information</h4>
+                <hr>
+                {{ value.describe_numeric | safe }}
+            {% endif %}
+            {% if value.describe_categorical != '' %}
+                <br>
+                <h4>Data Categorical Information</h4>
+                <hr>
+                {{ value.describe_categorical | safe }}
+            {% endif %}
         </div>
     {% endfor %}
 </div>

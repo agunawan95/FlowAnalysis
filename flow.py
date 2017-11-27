@@ -113,14 +113,22 @@ def run():
     data_tables = []
     co = 1
     for key, value in data.iteritems():
+        descat = ''
+        desnum = ''
+        if len(value['data'][value['data'].columns[value['data'].dtypes == "object"]].columns) > 0:
+            descat = value['data'][value['data'].columns[value['data'].dtypes == "object"]].describe().to_html(classes='table table-hover table-bordered')
+        if len(value['data'][value['data'].columns[value['data'].dtypes == "int64"]].columns) > 0 or len(value['data'][value['data'].columns[value['data'].dtypes == "float64"]].columns) > 0:
+            desnum = value['data'].describe().to_html(classes='table table-hover table-bordered')
         data_tables.append({
             'count': co,
-            'table': value['data'].head(10).to_html(classes='table table-hover table-bordered')
+            'table': value['data'].head(10).to_html(classes='table table-hover table-bordered'),
+            'describe_numeric': desnum,
+            'describe_categorical': descat
         })
         co += 1
     model_html = []
     for val in model:
-        model_html.append(render_template("report/decision_tree.html", data=val))
+        model_html.append(render_template("report/classifier.html", data=val))
     return jsonify({
         'data_html': render_template('report/data_list.html', data=data_tables),
         'chart': chart,

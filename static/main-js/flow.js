@@ -199,6 +199,7 @@ function init_accordion(){
     $("#query-content").html("");
     $("#tool-content").html("");
     $("#chart-content").html("");
+    $("#model-content").html("");
     for(var i in process_list){
         data = process_list[i];
         if(data['type'] == 'query'){
