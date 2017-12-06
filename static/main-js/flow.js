@@ -142,6 +142,51 @@ var process_list = [
         name: "Decision Tree Module",
         type: "model",
         tag: "decision, tree, model"
+    },
+    {
+        id: "naive-bayes-module",
+        process_id: "model:nb",
+        background: "bg-dark",
+        image: "img/model-nb.png",
+        name: "Naive Bayes Module",
+        type: "model",
+        tag: "naive, bayes, model"
+    },
+    {
+        id: "logistic-regression-module",
+        process_id: "model:lr",
+        background: "bg-dark",
+        image: "img/model-regression.png",
+        name: "Logistic Regression Module",
+        type: "model",
+        tag: "logistic, regression, model"
+    },
+    {
+        id: "regression-tree-module",
+        process_id: "model:rt",
+        background: "bg-dark",
+        image: "img/model-tree.png",
+        name: "Regression Module",
+        type: "model",
+        tag: "regression, tree, model"
+    },
+    {
+        id: "svr-module",
+        process_id: "model:svr",
+        background: "bg-dark",
+        image: "img/model-svr.png",
+        name: "Support Vector Regressor Module",
+        type: "model",
+        tag: "svr, support, vector, regressor, model"
+    },
+    {
+        id: "lasso-regression-module",
+        process_id: "model:lasso",
+        background: "bg-dark",
+        image: "img/model-regression.png",
+        name: "Lasso Regression Module",
+        type: "model",
+        tag: "lasso, regression, model"
     }
 ];
 
@@ -188,6 +233,16 @@ function initDraggable(){
                 correlationMatrixProcedure(leftPosition, topPosition);
             }else if(id == "model:dt"){
                 decisionTreeProcedure(leftPosition, topPosition);
+            }else if(id == "model:nb"){
+                naiveBayesProcedure(leftPosition, topPosition);
+            }else if(id == "model:lr"){
+                logisticRegressionProcedure(leftPosition, topPosition);
+            }else if(id == "model:rt"){
+                regressionTreeProcedure(leftPosition, topPosition);
+            }else if(id == "model:svr"){
+                SVRProcedure(leftPosition, topPosition);
+            }else if(id == "model:lasso"){
+                lassoRegressionProcedure(leftPosition, topPosition);
             }
         }
     });
@@ -267,6 +322,10 @@ $(document).ready(function(){
                 showUpdateValue(operatorId);
             }else if(metadata[operatorId]['type'] == 'model:dt'){
                 showDecisionTreeModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'model:nb'){
+                showNaiveBayesModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'model:lr'){
+                showLogisticRegressionModule(operatorId);
             }
             return true;
         },
@@ -307,7 +366,7 @@ $(document).ready(function(){
                 }
               }
               // metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
-            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge' || metadata[linkData['toOperator']]['type'] == 'model:dt'){
+            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge' || metadata[linkData['toOperator']]['type'] == 'model:dt' || metadata[linkData['toOperator']]['type'] == 'model:lr' || metadata[linkData['toOperator']]['type'] == 'model:nb' || metadata[linkData['toOperator']]['type'] == 'model:rt' || metadata[linkData['toOperator']]['type'] == 'model:svr' || metadata[linkData['toOperator']]['type'] == 'model:lasso'){
                 metadata[linkData['toOperator']]['input_shape'] = metadata[linkData['fromOperator']]['shape']; 
             }
             metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
@@ -339,7 +398,7 @@ $(document).ready(function(){
                 if(metadata[link['toOperator']]['type'] == 'process:join'){
                     link['toOperator']['metadata'] = {};
                 }
-            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize' || metadata[link['toOperator']]['type'] == 'process:cmerge' || metadata[link['toOperator']]['type'] == 'model:dt'){
+            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize' || metadata[link['toOperator']]['type'] == 'process:cmerge' || metadata[link['toOperator']]['type'] == 'model:dt' || metadata[link['toOperator']]['type'] == 'model:lr' || metadata[link['toOperator']]['type'] == 'model:nb' || metadata[link['toOperator']]['type'] == 'model:rt' || metadata[link['toOperator']]['type'] == 'model:svr' || metadata[link['toOperator']]['type'] == 'model:lasso'){
                 metadata[link['toOperator']]['input_shape'] = {};
             }
             metadata[link['toOperator']]['shape'] = {};
@@ -695,6 +754,66 @@ function decisionTreeProcedure(left, top){
         id_operation: id,
         type: 'model:dt',
         name: 'dt',
+        input_shape: {},
+        target: ""
+    };
+    metadata[id] = data;
+}
+
+function naiveBayesProcedure(left, top){
+    var id = addOutputOperator('Naive Bayes Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'model:nb',
+        name: 'nb',
+        input_shape: {},
+        target: ""
+    };
+    metadata[id] = data;
+}
+
+function logisticRegressionProcedure(left, top){
+    var id = addOutputOperator('Logistic Regression Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'model:lr',
+        name: 'lr',
+        input_shape: {},
+        target: ""
+    };
+    metadata[id] = data;
+}
+
+function regressionTreeProcedure(left, top){
+    var id = addOutputOperator('Regression Tree Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'model:rt',
+        name: 'rt',
+        input_shape: {},
+        target: ""
+    };
+    metadata[id] = data;
+}
+
+function SVRProcedure(left, top){
+    var id = addOutputOperator('Support Vector Regressor Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'model:svr',
+        name: 'svr',
+        input_shape: {},
+        target: ""
+    };
+    metadata[id] = data;
+}
+
+function lassoRegressionProcedure(left, top){
+    var id = addOutputOperator('Lasso Regression Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'model:lasso',
+        name: 'lasso',
         input_shape: {},
         target: ""
     };
@@ -1128,6 +1247,44 @@ function showDecisionTreeModule(id){
     $("#decisionTreeModal").modal();
 }
 
+function showNaiveBayesModule(id){
+    $("#nb-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#nb-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#nb-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#nb-module-warning").hide();
+        $("#nb-body").show();
+    }else{
+        $("#nb-module-warning").show();
+        $("#nb-module-perform").hide();
+        $("#nb-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#nb-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#naiveBayesModal").modal();
+}
+
+function showLogisticRegressionModule(id){
+    $("#lr-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#lr-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#lr-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#lr-module-warning").hide();
+        $("#lr-body").show();
+    }else{
+        $("#lr-module-warning").show();
+        $("#lr-module-perform").hide();
+        $("#lr-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#lr-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#logisticRegressionModal").modal();
+}
+
 function remakeOutputFeet(id, output_feet){
   var data = $('#content').flowchart('getData');
   var new_feet = {};
@@ -1412,6 +1569,26 @@ function performDecisionTreeModule(){
     var output_feet = $("#dt-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#decisionTreeModal").modal('hide');
+}
+
+function performNaiveBayesModule(){
+    var id = $("#nb-id").val();
+    var target = $("#nb-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#nb-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#naiveBayesModal").modal('hide');
+}
+
+function performLogisticRegressionModule(){
+    var id = $("#lr-id").val();
+    var target = $("#lr-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#lr-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#logisticRegressionModal").modal('hide');
 }
 
 function getMetadata(){

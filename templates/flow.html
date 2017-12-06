@@ -54,7 +54,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarColor02" data-step="1" data-intro="Ok, wasn't that fun?" data-position='bottom' data-scrollTo='tooltip'>
+            <div class="collapse navbar-collapse" id="navbarColor02" data-step="1" data-intro="This is Menubar Where you add file and access Workspace Menu" data-position='bottom' data-scrollTo='tooltip'>
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item dropdown active">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span class="caret"></span></a>
@@ -80,10 +80,10 @@
         </nav>
 
         <div class="container-fluid">
-            <div class="row" data-step="2" data-intro="Ok, wasn't that fun?" data-position='up' data-scrollTo='tooltip'>
-                <div class="col-sm-2" id="process-content" style="height: 450px" class="mCustomScrollbar">
+            <div class="row">
+                <div class="col-sm-2" id="process-content" style="height: 450px" class="mCustomScrollbar" data-step="2" data-intro="This is Module Box, all module you need is here!" data-position='bottom' data-scrollTo='tooltip'>
                     <br>
-                    <input type="text" name="process-search" id="process-search" class="form-control" placeholder="Search ...">
+                    <input type="text" name="process-search" id="process-search" class="form-control" placeholder="Search ..." data-step="3" data-intro="This is Module Box Search Bar, search you module here" data-position='bottom' data-scrollTo='tooltip'>
                     <br>
                     <div id="accordion" role="tablist" aria-multiselectable="true">
                         <div class="card">
@@ -149,7 +149,7 @@
                         
                     </div>
                 </div>
-                <div class="col-sm-10">
+                <div class="col-sm-10" data-step="4" data-intro="This is Work Canvas, You can create schema here, just drag and drop module here" data-position='bottom' data-scrollTo='tooltip'>
                     <div id="content-wrapper" style="width:100%; height: 450px;">
                         <div class="droppable" id="content" style="width:5000px; height: 450px;"></div>
                     </div>
@@ -161,13 +161,13 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-6" data-step="5" data-intro="This is Workspace Execution Pane, Click What you want todo Here!" data-position='right' data-scrollTo='tooltip'>
                     <h4 class="page-header">Tools: </h4>
                     <button class="btn btn-danger btn-sm" onclick="deleteOperation()"><i class="lnr lnr-cross"></i> Delete Selected</button>
                     <button class="btn btn-primary btn-sm" onclick="sendData()"><i class="lnr lnr-undo"></i> Execute</button>
                     <button class="btn btn-default btn-sm" onclick="testing()"><i class="lnr lnr-star"></i> Testing</button>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6" data-step="6" data-intro="This is Error Area! Well, it help you find what you've done Wrong!" data-position='bottom' data-scrollTo='tooltip'>
                     <div class="row">
                         <div class="col-sm-6">
                           <h4 class="page-header">Error Log: </h4>
@@ -877,6 +877,62 @@
             </div>
         </div>
 
+        <!-- Naive Bayes Modal -->
+        <div class="modal" id="naiveBayesModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Naive Bayes Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="nb-id">
+                        <div id="nb-body">
+                            <div class="form-group">
+                                <label for="target">Target: </label>
+                                <select name="nb-target" id="nb-target" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="nb-module-perform" onclick="performNaiveBayesModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('nb-id', 'naiveBayesModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logistic Regression Modal -->
+        <div class="modal" id="logisticRegressionModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Logistic Regression Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="lr-id">
+                        <div id="lr-body">
+                            <div class="form-group">
+                                <label for="target">Target: </label>
+                                <select name="lr-target" id="lr-target" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="lr-module-perform" onclick="performLogisticRegressionModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('lr-id', 'logisticRegressionModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
@@ -964,7 +1020,8 @@
                 //console.log(JSON.stringify(data))
                 //alert(JSON.stringify(data));
                 var metadata = getMetadata();
-                alert(JSON.stringify(metadata));
+                //alert(JSON.stringify(metadata));
+                //var schema = getSchema();
             }
         </script>
     </body>
