@@ -118,10 +118,10 @@ def run():
         if len(value['data'][value['data'].columns[value['data'].dtypes == "object"]].columns) > 0:
             descat = value['data'][value['data'].columns[value['data'].dtypes == "object"]].describe().to_html(classes='table table-hover table-bordered')
         if len(value['data'][value['data'].columns[value['data'].dtypes == "int64"]].columns) > 0 or len(value['data'][value['data'].columns[value['data'].dtypes == "float64"]].columns) > 0:
-            desnum = value['data'].describe().to_html(classes='table table-hover table-bordered')
+            desnum = value['data'].describe().to_html(classes='table table-hover table-bordered desc-num')
         data_tables.append({
             'count': co,
-            'table': value['data'].head(10).to_html(classes='table table-hover table-bordered'),
+            'table': value['data'].head(10).to_html(classes='table table-hover table-bordered data-finished'),
             'describe_numeric': desnum,
             'describe_categorical': descat
         })

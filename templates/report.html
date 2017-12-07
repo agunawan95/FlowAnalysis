@@ -66,7 +66,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h2><img src="{{ url_for('static', filename='img/data.png') }}" alt="" style="width: 32px; margin-bottom: 9px;"> Data</h2>
-                    <div id="table-list" style="overflow-x: scroll"></div>
+                    <div id="table-list"></div>
                 </div>
             </div>
             <div class="row">
@@ -126,7 +126,6 @@
         <script src="{{ url_for('static', filename='ios-loader/js/spin.min.js') }}"></script>        
         <script src="{{ url_for('static', filename='ios-loader/js/iosOverlay.js') }}"></script>
         <link rel="stylesheet" href="{{ url_for('static', filename='ios-loader/css/iosOverlay.css') }}">
-        
 
         <script>
             $(document).ready(function(){
@@ -157,22 +156,26 @@
                 });
                 var metadata = {{ metadata | safe }};
                 console.log(JSON.stringify(metadata));
-                $.post("/api/run", {metadata: JSON.stringify(metadata)}, function(res){
+                $.post("/api/run", {metadata: JSON.stringify(metadata)}, function(res, statusText, xhr){
+                    console.log(xhr.status);
                     console.log(JSON.stringify(res));
-                    $("#table-list").append(res['data_html']);
-                    res['chart'].forEach(element => {
-                        $("#chart-list").append('<div class="row"><div class="col-sm-12"><div class="text-center"><div class="card"><img src="' + element['img'] + '" alt="Card image" class="img-responsive"><div class="card-footer text-muted"><div class="text-right"><a href="' + element['img'] + '" download="filename.jpg" class="btn btn-primary btn-sm"><i class="lnr lnr-download"></i></a>&nbsp;<button class="btn btn-success btn-sm"><i class="lnr lnr-checkmark-circle"></i> Save</button></div></div></div></div></div></div>');
-                    });
-                    res['model_html'].forEach(element => {
-                        $("#model-list").append(element);
-                    });
-                    overlay.update({
-                        text: "Success!",
-                        icon: "{{ url_for('static', filename='ios-loader/img/check.png') }}"
-                    });
-                    window.setTimeout(function(){
-                        overlay.hide();
-                    }, 100);
+                    var status = xhr.status;
+                    if(status == 200){
+                        $("#table-list").append(res['data_html']);
+                        res['chart'].forEach(element => {
+                            $("#chart-list").append('<div class="row"><div class="col-sm-12"><div class="text-center"><div class="card"><img src="' + element['img'] + '" alt="Card image" class="img-responsive"><div class="card-footer text-muted"><div class="text-right"><a href="' + element['img'] + '" download="filename.jpg" class="btn btn-primary btn-sm"><i class="lnr lnr-download"></i></a>&nbsp;<button class="btn btn-success btn-sm"><i class="lnr lnr-checkmark-circle"></i> Save</button></div></div></div></div></div></div>');
+                        });
+                        res['model_html'].forEach(element => {
+                            $("#model-list").append(element);
+                        });
+                        overlay.update({
+                            text: "Success!",
+                            icon: "{{ url_for('static', filename='ios-loader/img/check.png') }}"
+                        });
+                        window.setTimeout(function(){
+                            overlay.hide();
+                        }, 100);
+                    }
                 });
             });
 

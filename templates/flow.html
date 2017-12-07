@@ -933,6 +933,90 @@
             </div>
         </div>
 
+        <!-- Regression Tree Modal -->
+        <div class="modal" id="regressionTreeModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Regression Tree Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="lr-id">
+                        <div id="rt-body">
+                            <div class="form-group">
+                                <label for="target">Target: </label>
+                                <select name="rt-target" id="rt-target" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="rt-module-perform" onclick="performRegressionTreeModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('rt-id', 'regressionTreeModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SVR Modal -->
+        <div class="modal" id="SVRModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Support Vector Regressor Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="svr-id">
+                        <div id="svr-body">
+                            <div class="form-group">
+                                <label for="target">Target: </label>
+                                <select name="svr-target" id="svr-target" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="svr-module-perform" onclick="performSVRModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('svr-id', 'SVRModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lasso Regression Modal -->
+        <div class="modal" id="lassoRegressionModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Lasso Regression Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="lasso-id">
+                        <div id="lasso-body">
+                            <div class="form-group">
+                                <label for="target">Target: </label>
+                                <select name="lasso-target" id="lasso-target" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="lasso-module-perform" onclick="performLassoRegressionModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('lasso-id', 'lassoRegressionModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>

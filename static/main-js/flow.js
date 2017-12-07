@@ -326,6 +326,12 @@ $(document).ready(function(){
                 showNaiveBayesModule(operatorId);
             }else if(metadata[operatorId]['type'] == 'model:lr'){
                 showLogisticRegressionModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'model:rt'){
+                showRegressionTreeModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'model:svr'){
+                showSVRModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'model:lasso'){
+                showLassoRegressionModule(operatorId);
             }
             return true;
         },
@@ -1285,6 +1291,63 @@ function showLogisticRegressionModule(id){
     $("#logisticRegressionModal").modal();
 }
 
+function showRegressionTreeModule(id){
+    $("#rt-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#rt-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#rt-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#rt-module-warning").hide();
+        $("#rt-body").show();
+    }else{
+        $("#rt-module-warning").show();
+        $("#rt-module-perform").hide();
+        $("#rt-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#rt-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#regressionTreeModal").modal();
+}
+
+function showSVRModule(id){
+    $("#svr-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#svr-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#svr-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#svr-module-warning").hide();
+        $("#svr-body").show();
+    }else{
+        $("#svr-module-warning").show();
+        $("#svr-module-perform").hide();
+        $("#svr-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#svr-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#SVRModal").modal();
+}
+
+function showLassoRegressionModule(id){
+    $("#lasso-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#lasso-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#lasso-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#lasso-module-warning").hide();
+        $("#lasso-body").show();
+    }else{
+        $("#lasso-module-warning").show();
+        $("#lasso-module-perform").hide();
+        $("#lasso-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#lasso-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#lassoRegressionModal").modal();
+}
+
 function remakeOutputFeet(id, output_feet){
   var data = $('#content').flowchart('getData');
   var new_feet = {};
@@ -1589,6 +1652,36 @@ function performLogisticRegressionModule(){
     var output_feet = $("#lr-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#logisticRegressionModal").modal('hide');
+}
+
+function performRegressionTreeModule(){
+    var id = $("#rt-id").val();
+    var target = $("#rt-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#rt-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#regressionTreeModal").modal('hide');
+}
+
+function performLogisticRegressionModule(){
+    var id = $("#svr-id").val();
+    var target = $("#svr-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#svr-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#SVRnModal").modal('hide');
+}
+
+function performLassoRegressionModule(){
+    var id = $("#lasso-id").val();
+    var target = $("#lasso-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#lasso-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#lassoRegressionModal").modal('hide');
 }
 
 function getMetadata(){

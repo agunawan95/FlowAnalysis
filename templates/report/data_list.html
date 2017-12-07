@@ -12,12 +12,16 @@
             <br>
             <h4>Data</h4>
             <hr>
-            {{ value.table | safe }}
+            <div id="data" style="overflow-x: scroll">
+                {{ value.table | safe }}
+            </div>
             {% if value.describe_numeric != '' %}
                 <br>
                 <h4>Data Numeric Information</h4>
                 <hr>
-                {{ value.describe_numeric | safe }}
+                <div id="desc-num" class="sticky-table sticky-headers sticky-ltr-cells">
+                    {{ value.describe_numeric | safe }}
+                </div>
             {% endif %}
             {% if value.describe_categorical != '' %}
                 <br>
@@ -28,3 +32,9 @@
         </div>
     {% endfor %}
 </div>
+<script>
+    $('.desc-num > tbody > tr >th').addClass('sticky-cell');
+    $('.data-finished th').addClass('sticky-cell');
+</script>
+<script src="{{ url_for('static', filename='sticky-table/jquery.stickytable.min.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='sticky-table/jquery.stickytable.min.css') }}">
