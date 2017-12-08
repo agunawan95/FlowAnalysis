@@ -68,9 +68,6 @@ class FlowProcess:
                         self.process[key]['shared_input_resource'].append(self.id)
                         break
 
-    def check_input_aviability(self, current):
-
-
     def extract_input(self, current, mode):
         if mode == 1:
             input = self.shared_resource[current['shared_input_resource'][0]]['data']
@@ -392,6 +389,7 @@ class FlowProcess:
                 p = tools.convert_base64(plt)
                 res = {
                     "name": "Decision Tree",
+                    "type": "clf",
                     "cv": cv.tolist(),
                     "accuracy": float(cv.mean()),
                     "error": float(cv.std() * 2),
@@ -447,6 +445,7 @@ class FlowProcess:
                 p = tools.convert_base64(plt)
                 res = {
                     "name": "Naive Bayes",
+                    "type": "clf",
                     "cv": cv.tolist(),
                     "accuracy": float(cv.mean()),
                     "error": float(cv.std() * 2),
@@ -502,6 +501,7 @@ class FlowProcess:
                 p = tools.convert_base64(plt)
                 res = {
                     "name": "Logistic Regression",
+                    "type": "clf",
                     "cv": cv.tolist(),
                     "accuracy": float(cv.mean()),
                     "error": float(cv.std() * 2),
@@ -510,6 +510,37 @@ class FlowProcess:
                     "score": score,
                     "cv_plot": p,
                     "total_test_data": int(total_data)
+                }
+                self.model.append(res)
+            elif current['type'] == 'model:rt':
+                input = self.extract_input(current, 1)
+                desc = input.describe()
+                regressor = tree.DecisionTreeRegressor()
+                x = input.drop(current['target'], axis=1)
+                y = input[current['target']]
+                regressor.fit(x, y)
+                rmse= np.sqrt(-cross_val_score(regressor, x, y, scoring="neg_mean_squared_error", cv = 10))
+
+                objects = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                y_pos = np.arange(len(objects))
+                performance = rmse
+                
+                plt.clf()
+                plt.bar(y_pos, performance, align='center', alpha=0.5)
+                plt.xticks(y_pos, objects)
+                plt.ylabel('RMSE')
+                plt.xlabel('Fold')
+                plt.title('Regression Tree Cross Validation, 10 Fold')
+                
+                tools = ct.ChartTools()
+                p = tools.convert_base64(plt)
+                res = {
+                    'name': 'Regression Tree',
+                    "type": "regressor",
+                    'desc': desc.to_dict()[current['target']],
+                    'accuracy': rmse.mean(),
+                    'std_dev': rmse.std(),
+                    'cv_plot': p,
                 }
                 self.model.append(res)
             self.process.pop(0)

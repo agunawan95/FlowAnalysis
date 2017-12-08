@@ -35,6 +35,8 @@ def file_metadata(id=None):
         df = pd.read_csv('dummy/west_nile_weather.csv')
     elif id == 5:
         df = pd.read_csv('dummy/hr-departments.csv')
+    elif id == 6:
+        df = pd.read_csv('dummy/Bakery_Clean.csv')
     return jsonify(df.dtypes.apply(lambda x: x.name).to_dict())
 
 
@@ -128,7 +130,10 @@ def run():
         co += 1
     model_html = []
     for val in model:
-        model_html.append(render_template("report/classifier.html", data=val))
+        if val['type'] == 'clf':
+            model_html.append(render_template("report/classifier.html", data=val))
+        elif val['type'] == 'regressor':
+            model_html.append(render_template("report/regressor.html", data=val))
     return jsonify({
         'data_html': render_template('report/data_list.html', data=data_tables),
         'chart': chart,
