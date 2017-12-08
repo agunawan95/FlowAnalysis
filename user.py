@@ -162,7 +162,7 @@ class User(database.Database):
         if not os.path.exists(basedir + "/upload/" + home_folder + "/project"):
             os.makedirs(basedir + "/upload/" + home_folder + "/project")
 
-        sql = "INSERT INTO user VALUES(default, '" + username + "', '" + email + "', '" + password + "', '" + home_folder + "', '" + auth + "', " + str(admin) + ")"
+        sql = "INSERT INTO user VALUES(default, '" + username + "', '" + email + "', '" + password + "', '" + home_folder + "', '" + auth + "', " + str(admin) + ", 0)"
         if self.cur.execute(sql):
             # self.gl.users.create({
             #    'email': email,
@@ -306,3 +306,16 @@ class User(database.Database):
         self.cur.execute(sql)
         data = self.cur.fetchone()
         return data
+
+    def update_intro(self, id):
+        """
+        Update First Login Introdunction to Done
+
+        :param id: ID of a User
+        :type id: Int
+        :return: None
+        :rtype: None
+        """
+        sql = "UPDATE user SET first_login = 1 WHERE id = " + str(id)
+        self.cur.execute(sql)
+        self.con.commit()

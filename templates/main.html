@@ -1,5 +1,6 @@
 {% extends "layouts/layout-main.html" %}
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/introjs.css') }}">
 <script>
     function show_merge_request(){
         $("#request-merge").modal();
@@ -21,7 +22,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-3" data-step="7" data-intro="This is How Many Project you Have Created!" data-position='bottom' data-scrollTo='tooltip'>
         <div class="card text-white bg-success">
             <div class="card-body">
                 <div class="text-center">
@@ -34,7 +35,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-3" data-step="8" data-intro="This is How Many File you Have Uploaded!" data-position='bottom' data-scrollTo='tooltip'>
         <div class="card text-white bg-dark">
             <div class="card-body">
                 <div class="text-center">
@@ -47,7 +48,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-3" data-step="9" data-intro="This is How Many Model you Have Created!" data-position='bottom' data-scrollTo='tooltip'>
         <div class="card text-white bg-danger">
             <div class="card-body">
                 <div class="text-center">
@@ -60,7 +61,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-3" data-step="10" data-intro="Someone wants to Merge Project With You!" data-position='bottom' data-scrollTo='tooltip'>
         <div class="card text-white bg-warning">
             <div class="card-body">
                 <div class="text-center">
@@ -77,7 +78,7 @@
 <br>
 <br>
 <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-8" data-step="11" data-intro="See if There SomethingUnexpected Happen!" data-position='bottom' data-scrollTo='tooltip'>
         <h5><i class="lnr lnr-history"></i> Logs</h5>
         <hr>
         <div class="row">
@@ -85,7 +86,7 @@
             <div class="col-sm-11">[INFO] Andre Has Login to System</div>
         </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4" data-step="12" data-intro="Your Lastest Project! Get it Done!" data-position='bottom' data-scrollTo='tooltip'>
         <h5><i class="lnr lnr-coffee-cup"></i> Latest Project</h5>
         <hr>
         <div class="list-group">
@@ -98,35 +99,41 @@
 
 <!-- Request Merge Modal -->
 <div class="modal" id="request-merge">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Request Merge</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-1">1</div>
-                        <div class="col-sm-8">YC Request Merge on Project: HR predictions</div>
-                        <div class="col-sm-3">
-                            <a href="#" class="btn btn-success btn-sm">Go to Project</a>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-sm-1">1</div>
-                        <div class="col-sm-8">YC Request Merge on Project: HR predictions</div>
-                        <div class="col-sm-3">
-                            <a href="#" class="btn btn-success btn-sm">Go to Project</a>
-                        </div>
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Request Merge</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-1">1</div>
+                    <div class="col-sm-8">YC Request Merge on Project: HR predictions</div>
+                    <div class="col-sm-3">
+                        <a href="#" class="btn btn-success btn-sm">Go to Project</a>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-1">1</div>
+                    <div class="col-sm-8">YC Request Merge on Project: HR predictions</div>
+                    <div class="col-sm-3">
+                        <a href="#" class="btn btn-success btn-sm">Go to Project</a>
+                    </div>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
+<script src="{{ url_for('static', filename='js/intro.js') }}"></script>
+{% if do_intro %}
+    <script>
+        introJs().start();
+    </script>
+{% endif %}
 {% endblock %}

@@ -68,37 +68,37 @@
     </script>
     <body>
         <div class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="" style="width: 32px; height: 32px"> &nbsp; Flow Analysis</a>
+            <a class="navbar-brand" href="#" data-step="1" data-intro="Welcome to Flow Analysis we are going to introduce Flow Analysis, so stay tune!" data-position='bottom' data-scrollTo='tooltip'><img src="{{ url_for('static', filename='img/logo.png') }}" alt="" style="width: 32px; height: 32px"> &nbsp; Flow Analysis</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarColor02" data-step="1" data-intro="Ok, wasn't that fun?" data-position='bottom' data-scrollTo='tooltip'>
+            <div class="collapse navbar-collapse" id="navbarColor02">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item {% if session['page'] == 'home' %} active {% endif %}">
+                    <li class="nav-item {% if session['page'] == 'home' %} active {% endif %}" data-step="2" data-intro="This Menu is for Homepage" data-position='bottom' data-scrollTo='tooltip'>
                         <a href="/" class="nav-link"><i class="lnr lnr-home"></i> Home</a>
                     </li>
-                    <li class="nav-item dropdown {% if session['page'] == 'file' %} active {% endif %}">
+                    <li class="nav-item dropdown {% if session['page'] == 'file' %} active {% endif %}" data-step="3" data-intro="This Menu is for File Page, Where you can find all your files here! Oh you can also upload files here!" data-position='bottom' data-scrollTo='tooltip'>
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="lnr lnr-briefcase"></i> Files <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item"><a href="/files"><i class="lnr lnr-file-empty"></i> My Files</a></li>
                             <li class="dropdown-item"><a href="/shared"><i class="lnr lnr-link"></i> Shared With Me</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown {% if session['page'] == 'enterprise' %} active {% endif %}">
+                    <li class="nav-item dropdown {% if session['page'] == 'enterprise' %} active {% endif %}" data-step="4" data-intro="This Menu is for Enterprise Page, If you are Enterprise Admin You can Add User Here!" data-position='bottom' data-scrollTo='tooltip'>
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="lnr lnr-apartment"></i> Enterprise <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item"><a href="/users"><i class="lnr lnr-users"></i> Enterprise User</a></li>
                             <li class="dropdown-item"><a href="/recycle"><i class="lnr lnr-trash"></i> Enterprise Recycle Bin</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown {% if session['page'] == 'project' %} active {% endif %}">
+                    <li class="nav-item dropdown {% if session['page'] == 'project' %} active {% endif %}" data-step="5" data-intro="This is Where you Work, Create Analysis and Have Fun!" data-position='bottom' data-scrollTo='tooltip'>
                         <a href="/projects" class="nav-link"><i class="lnr lnr-rocket"></i> My Project</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav navbar-right">
                     <li class="nav-item">
-                        <a href="/logout" class="nav-link"><i class="lnr lnr-exit"></i> Logout</a>
+                        <a href="/logout" class="nav-link" data-step="6" data-intro="This button used when you want to leave, but please come back soon!" data-position='bottom' data-scrollTo='tooltip'><i class="lnr lnr-exit"></i> Logout</a>
                     </li>
                 </ul>
             </div>

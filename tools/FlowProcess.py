@@ -68,6 +68,9 @@ class FlowProcess:
                         self.process[key]['shared_input_resource'].append(self.id)
                         break
 
+    def check_input_aviability(self, current):
+
+
     def extract_input(self, current, mode):
         if mode == 1:
             input = self.shared_resource[current['shared_input_resource'][0]]['data']
@@ -129,7 +132,6 @@ class FlowProcess:
             elif current['type'] == 'process:join':
                 if len(current['shared_input_resource']) == 2:
                     left, right = self.extract_input(current, 2)
-
                     df = left.merge(right, left_on=current['metadata']['left'], right_on=current['metadata']['right'], how=current['metadata']['how'])
                     count = 1
                     if len(current['link']) > 0:

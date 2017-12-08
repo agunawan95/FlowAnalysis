@@ -86,7 +86,14 @@ def main():
     if session.get("login") is None:
         return redirect("/login")
     session['page'] = 'home'
-    return render_template("main.html")
+    user_helper = user.User()
+    user_helper.load_user(session['id'])
+    usr = user_helper.get_data()
+    do_intro = False
+    if usr['first_login'] == 0:
+        do_intro = True
+        user_helper.update_intro(session['id'])
+    return render_template("main.html", do_intro=do_intro)
 
 
 @app.route("/login", methods=['GET', 'POST'])
