@@ -45,9 +45,8 @@ class RegressorRecommender(Recommender.Recommender):
         }
 
     def regressor_lasso(self, x, y):
-        regressor = LassoCV(alphas=[1, 0.1, 0.001, 0.0005]).fit(x, y)
         start = time.clock()
-        regressor.fit(x, y)
+        regressor = LassoCV(alphas=[1, 0.1, 0.001, 0.0005]).fit(x, y)
         end = time.clock()
 
         scores = np.sqrt(-cross_val_score(regressor, x, y, scoring="neg_mean_squared_error", cv=self.get_cross_validation_split()))

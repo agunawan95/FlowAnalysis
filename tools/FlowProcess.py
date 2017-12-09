@@ -10,7 +10,10 @@ from sklearn.model_selection import train_test_split
 import sklearn.tree as tree
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
-
+from sklearn import svm
+from sklearn.linear_model import LassoCV
+import recommender.ClassifierRecommender as cr
+import recommender.RegressorRecommender as rr
 
 class FlowProcess:
     metadata = None
@@ -26,6 +29,7 @@ class FlowProcess:
     # Result
     chart = []
     model = []
+    recommender = []
 
     def __init__(self):
         self.metadata = None
@@ -36,6 +40,7 @@ class FlowProcess:
         self.id = 0
         self.chart = []
         self.model = []
+        recommender = []
 
     def set_metadata(self, metadata):
         '''
@@ -543,6 +548,83 @@ class FlowProcess:
                     'cv_plot': p,
                 }
                 self.model.append(res)
+            elif current['type'] == 'model:svr':
+                input = self.extract_input(current, 1)
+                desc = input.describe()
+                regressor = svm.SVR()
+                x = input.drop(current['target'], axis=1)
+                y = input[current['target']]
+                regressor.fit(x, y)
+                rmse= np.sqrt(-cross_val_score(regressor, x, y, scoring="neg_mean_squared_error", cv = 10))
+
+                objects = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                y_pos = np.arange(len(objects))
+                performance = rmse
+                
+                plt.clf()
+                plt.bar(y_pos, performance, align='center', alpha=0.5)
+                plt.xticks(y_pos, objects)
+                plt.ylabel('RMSE')
+                plt.xlabel('Fold')
+                plt.title('Support Vector Regressor Cross Validation, 10 Fold')
+                
+                tools = ct.ChartTools()
+                p = tools.convert_base64(plt)
+                res = {
+                    'name': 'Support Vector Regressor',
+                    "type": "regressor",
+                    'desc': desc.to_dict()[current['target']],
+                    'accuracy': rmse.mean(),
+                    'std_dev': rmse.std(),
+                    'cv_plot': p,
+                }
+                self.model.append(res)
+            elif current['type'] == 'model:lasso':
+                input = self.extract_input(current, 1)
+                desc = input.describe()
+                x = input.drop(current['target'], axis=1)
+                y = input[current['target']]
+                regressor = LassoCV(alphas=[1, 0.1, 0.001, 0.0005]).fit(x, y)
+                rmse= np.sqrt(-cross_val_score(regressor, x, y, scoring="neg_mean_squared_error", cv = 10))
+
+                objects = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                y_pos = np.arange(len(objects))
+                performance = rmse
+                
+                plt.clf()
+                plt.bar(y_pos, performance, align='center', alpha=0.5)
+                plt.xticks(y_pos, objects)
+                plt.ylabel('RMSE')
+                plt.xlabel('Fold')
+                plt.title('Lasso Regression Cross Validation, 10 Fold')
+                
+                tools = ct.ChartTools()
+                p = tools.convert_base64(plt)
+                res = {
+                    'name': 'Lasso Regression',
+                    "type": "regressor",
+                    'desc': desc.to_dict()[current['target']],
+                    'accuracy': rmse.mean(),
+                    'std_dev': rmse.std(),
+                    'cv_plot': p,
+                }
+                self.model.append(res)
+            elif current['type'] == 'recommender:regressor':
+                input = self.extract_input(current, 1)
+                rec = rr.RegressorRecommender()
+                rec.set_data(input.copy())
+                rec.define_target(current['target'])
+                rec.run()
+                res = rec.sort('rmse')
+                self.recommender = res
+            elif current['type'] == 'recommender:classifier':
+                input = self.extract_input(current, 1)
+                rec = cr.ClassifierRecommender()
+                rec.set_data(input.copy())
+                rec.define_target(current['target'])
+                rec.run()
+                res = rec.sort('accuracy')
+                self.recommender = res
             self.process.pop(0)
         if len(self.shared_resource) == 0:
             self.shared_resource[self.id] = self.last_resource
@@ -556,3 +638,6 @@ class FlowProcess:
 
     def get_model(self):
         return self.model
+
+    def get_recommender(self):
+        return self.recommender

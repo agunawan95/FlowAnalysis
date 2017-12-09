@@ -40,7 +40,29 @@ class ChartTools(tools.Tools):
         figfile.seek(0)
         figdata_png = base64.b64encode(figfile.getvalue())
         return "data:image/png;base64," + figdata_png.decode('utf8')
-    
-    def clear_chart():
-        plt.close()
 
+    def line_plot(self, date, target):
+        ts = pd.Series(self.df[target], index=self.df[date])
+        ts = ts.cumsum()
+        df_fig = ts.plot()
+        fig = df_fig.get_figure()
+        plt.title("Box Plot")
+        plt.show()
+        return self.convert_base64(fig)
+
+    def pie_plot(self, target):
+        pie = df[target].value_counts()
+        df_fig = pie.plot.pie(figsize=(6, 6))
+        fig = df_fig.get_figure()
+        plt.title("Pie Plot")
+        return self.convert_base64(fig)
+
+    def bar_chart(self, x, y):
+        plt.bar(self.df[x], self.df[y], align='center', alpha=0.5)
+        plt.ylabel(y)
+        plt.xlabel(x)
+        plt.title('Bar Chart')
+        return self.convert_base64(plt)
+
+    def clear_chart(self):
+        plt.clf()

@@ -64,11 +64,11 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Specials <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item" id="addFile"><a href="#"><i class="lnr lnr-plus-circle"></i> Add Dataset</a></li>
                             <li class="dropdown-item" id=""><a href="#"><i class="lnr lnr-star"></i> Add Predictive Model</a></li>
-                            <li class="dropdown-item" id=""><a href="#"><i class="lnr lnr-rocket"></i> Add Recommend & Analyze</a></li>
+                            <li class="dropdown-item" id=""><a href="#" onclick="clfRecommenderProcedure()"><i class="lnr lnr-rocket"></i> Add Recommend & Analyze</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -167,6 +167,8 @@
                     <button class="btn btn-danger btn-sm" onclick="deleteOperation()"><i class="lnr lnr-cross"></i> Delete Selected</button>
                     <button class="btn btn-primary btn-sm" onclick="sendData()"><i class="lnr lnr-undo"></i> Execute</button>
                     <button class="btn btn-default btn-sm" onclick="testing()"><i class="lnr lnr-star"></i> Testing</button>
+                    <button class="btn btn-success btn-sm" onclick="recommend()"><i class="lnr lnr-star"></i> Recommend & Analyze</button>
+                    
                 </div>
                 <div class="col-sm-6" data-step="6" data-intro="This is Error Area! Well, it help you find what you've done Wrong!" data-position='bottom' data-scrollTo='tooltip'>
                     <div class="row">
@@ -1013,6 +1015,34 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="lasso-module-perform" onclick="performLassoRegressionModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
                         <button class="btn btn-danger" onclick="deleteModule('lasso-id', 'lassoRegressionModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Classifier Recommender Modal -->
+        <div class="modal" id="clfRecommenderModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Classifier Recommender Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="clf-rec-id">
+                        <div id="clf-rec-body">
+                            <div class="form-group">
+                                <label for="target">Target: </label>
+                                <select name="clf-rec-target" id="clf-rec-target" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="clf-rec-module-perform" onclick="performClfRecommenderModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('clf-rec-id', 'clfRecommenderModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>

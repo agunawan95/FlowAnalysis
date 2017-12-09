@@ -332,6 +332,8 @@ $(document).ready(function(){
                 showSVRModule(operatorId);
             }else if(metadata[operatorId]['type'] == 'model:lasso'){
                 showLassoRegressionModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'recommender:classifier'){
+                showClfRecommenderModule(operatorId);
             }
             return true;
         },
@@ -372,7 +374,7 @@ $(document).ready(function(){
                 }
               }
               // metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
-            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge' || metadata[linkData['toOperator']]['type'] == 'model:dt' || metadata[linkData['toOperator']]['type'] == 'model:lr' || metadata[linkData['toOperator']]['type'] == 'model:nb' || metadata[linkData['toOperator']]['type'] == 'model:rt' || metadata[linkData['toOperator']]['type'] == 'model:svr' || metadata[linkData['toOperator']]['type'] == 'model:lasso'){
+            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge' || metadata[linkData['toOperator']]['type'] == 'model:dt' || metadata[linkData['toOperator']]['type'] == 'model:lr' || metadata[linkData['toOperator']]['type'] == 'model:nb' || metadata[linkData['toOperator']]['type'] == 'model:rt' || metadata[linkData['toOperator']]['type'] == 'model:svr' || metadata[linkData['toOperator']]['type'] == 'model:lasso' || metadata[linkData['toOperator']]['type'] == 'recommender:classifier'){
                 metadata[linkData['toOperator']]['input_shape'] = metadata[linkData['fromOperator']]['shape']; 
             }
             metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
@@ -404,7 +406,7 @@ $(document).ready(function(){
                 if(metadata[link['toOperator']]['type'] == 'process:join'){
                     link['toOperator']['metadata'] = {};
                 }
-            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize' || metadata[link['toOperator']]['type'] == 'process:cmerge' || metadata[link['toOperator']]['type'] == 'model:dt' || metadata[link['toOperator']]['type'] == 'model:lr' || metadata[link['toOperator']]['type'] == 'model:nb' || metadata[link['toOperator']]['type'] == 'model:rt' || metadata[link['toOperator']]['type'] == 'model:svr' || metadata[link['toOperator']]['type'] == 'model:lasso'){
+            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize' || metadata[link['toOperator']]['type'] == 'process:cmerge' || metadata[link['toOperator']]['type'] == 'model:dt' || metadata[link['toOperator']]['type'] == 'model:lr' || metadata[link['toOperator']]['type'] == 'model:nb' || metadata[link['toOperator']]['type'] == 'model:rt' || metadata[link['toOperator']]['type'] == 'model:svr' || metadata[link['toOperator']]['type'] == 'model:lasso' || metadata[link['toOperator']]['type'] == 'recommender:classifier'){
                 metadata[link['toOperator']]['input_shape'] = {};
             }
             metadata[link['toOperator']]['shape'] = {};
@@ -820,6 +822,18 @@ function lassoRegressionProcedure(left, top){
         id_operation: id,
         type: 'model:lasso',
         name: 'lasso',
+        input_shape: {},
+        target: ""
+    };
+    metadata[id] = data;
+}
+
+function clfRecommenderProcedure(left, top){
+    var id = addOutputOperator('Classifier Recommender Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'recommender:classifier',
+        name: 'clf-rec',
         input_shape: {},
         target: ""
     };
@@ -1348,6 +1362,25 @@ function showLassoRegressionModule(id){
     $("#lassoRegressionModal").modal();
 }
 
+function showClfRecommenderModule(id){
+    $("#clf-rec-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#clf-rec-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#clf-rec-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#clf-rec-module-warning").hide();
+        $("#clf-rec-body").show();
+    }else{
+        $("#clf-rec-module-warning").show();
+        $("#clf-rec-module-perform").hide();
+        $("#clf-rec-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#clf-rec-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#clfRecommenderModal").modal();
+}
+
 function remakeOutputFeet(id, output_feet){
   var data = $('#content').flowchart('getData');
   var new_feet = {};
@@ -1664,14 +1697,14 @@ function performRegressionTreeModule(){
     $("#regressionTreeModal").modal('hide');
 }
 
-function performLogisticRegressionModule(){
+function performSVRModule(){
     var id = $("#svr-id").val();
     var target = $("#svr-target").val();
     metadata[id]['target'] = target;
     metadata[id]['shape'] = metadata[id]['input_shape'];
     var output_feet = $("#svr-output-feet").val();
     remakeOutputFeet(id, output_feet);
-    $("#SVRnModal").modal('hide');
+    $("#SVRModal").modal('hide');
 }
 
 function performLassoRegressionModule(){
@@ -1682,6 +1715,16 @@ function performLassoRegressionModule(){
     var output_feet = $("#lasso-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#lassoRegressionModal").modal('hide');
+}
+
+function performClfRecommenderModule(){
+    var id = $("#clf-rec-id").val();
+    var target = $("#clf-rec-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#clf-rec-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#clfRecommenderModal").modal('hide');
 }
 
 function getMetadata(){
@@ -1718,6 +1761,17 @@ function sendData(){
     var schema = getSchema();
     submit_post_via_hidden_form(
         '/report',
+        {
+            metadata: JSON.stringify(metadata)
+        }
+    );
+}
+
+function recommend(){
+    var metadata = getMetadata();
+    var schema = getSchema();
+    submit_post_via_hidden_form(
+        '/recomend',
         {
             metadata: JSON.stringify(metadata)
         }

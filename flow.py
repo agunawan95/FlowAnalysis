@@ -103,6 +103,11 @@ def report():
     return render_template("report.html", metadata=metadata)
 
 
+@app.route("/recomend", methods=['POST'])
+def recommender():
+    metadata = str(request.form['metadata']).encode('utf8')
+    return render_template("recomender.html", metadata=metadata)
+
 @app.route("/api/run", methods=['POST'])
 def run():
     metadata = json.loads(request.form['metadata'])
@@ -141,6 +146,21 @@ def run():
         'model_html': model_html
     })
 
+@app.route("/api/recommend", methods=['POST'])
+def recommend():
+    metadata = json.loads(request.form['metadata'])
+    tools = fp.FlowProcess()
+    tools.set_metadata(metadata)
+    tools.run()
+    res = tools.get_recommender()
+    rank = []
+    for key, value in enumerate(res):
+        value['rank'] = key + 1
+        value['report'] = ''
+        rank.append(render_template('recommender/recomended.html', data=value))
+    return jsonify({
+        'rank_result': rank
+    })
 
 @app.route('/api/downloadbase64', methods=['POST'])
 def downloadbase64():
