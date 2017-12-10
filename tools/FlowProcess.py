@@ -339,10 +339,83 @@ class FlowProcess:
                 self.id += 1
             elif current['type'] == 'chart:cm':
                 tools = ct.ChartTools()
+                tools.clear_chart()
                 input = self.extract_input(current, 1)
                 tools.set_dataset(input.copy())
                 title = "Correlation Matrix"
                 img = tools.corr_matrix_chart(title)
+                data = {
+                    'title': title,
+                    'img': img
+                }
+                self.chart.append(data)
+            elif current['type'] == 'chart:scatter':
+                tools = ct.ChartTools()
+                tools.clear_chart()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                title = "Scatter Chart"
+                img = tools.scatter_plot(current['x'], current['y'])
+                data = {
+                    'title': title,
+                    'img': img
+                }
+                self.chart.append(data)
+            elif current['type'] == 'chart:line':
+                tools = ct.ChartTools()
+                tools.clear_chart()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                title = "Line Chart"
+                img = tools.line_plot(current['x'], current['y'])
+                data = {
+                    'title': title,
+                    'img': img
+                }
+                self.chart.append(data)
+            elif current['type'] == 'chart:bar':
+                tools = ct.ChartTools()
+                tools.clear_chart()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                title = "Bar Chart"
+                img = tools.bar_chart(current['x'], current['y'])
+                data = {
+                    'title': title,
+                    'img': img
+                }
+                self.chart.append(data)
+            elif current['type'] == 'chart:pie':
+                tools = ct.ChartTools()
+                tools.clear_chart()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                title = "Pie Chart"
+                img = tools.pie_plot(current['target'])
+                data = {
+                    'title': title,
+                    'img': img
+                }
+                self.chart.append(data)
+            elif current['type'] == 'chart:hist':
+                tools = ct.ChartTools()
+                tools.clear_chart()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                title = "Histogram"
+                img = tools.hist(current['target'])
+                data = {
+                    'title': title,
+                    'img': img
+                }
+                self.chart.append(data)
+            elif current['type'] == 'chart:box':
+                tools = ct.ChartTools()
+                tools.clear_chart()
+                input = self.extract_input(current, 1)
+                tools.set_dataset(input.copy())
+                title = "Boxplot Chart"
+                img = tools.box_plot(current['target'])
                 data = {
                     'title': title,
                     'img': img
@@ -611,19 +684,80 @@ class FlowProcess:
                 self.model.append(res)
             elif current['type'] == 'recommender:regressor':
                 input = self.extract_input(current, 1)
+
+                row = input.shape[0]
+                percent = float(current['sample_size']) / 100
+                y = df[current['target']]
+
+                if current['sample_type'] == 'random':
+                    df = input.sample(int(row * percent))
+                else:
+                    bins = np.linspace(0, y.shape[0], 5)
+                    y_binned = np.digitize(y, bins)
+                    x_train, x_test, y_train, y_test = train_test_split(df, y, test_size=percent, stratify=y_binned)
+                    df = x_test
+
                 rec = rr.RegressorRecommender()
                 rec.set_data(input.copy())
                 rec.define_target(current['target'])
                 rec.run()
                 res = rec.sort('rmse')
+
+                for key, value in enumerate(res):
+                    objects = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                    y_pos = np.arange(len(objects))
+                    performance = value['cv']
+                    
+                    plt.clf()
+                    plt.bar(y_pos, performance, align='center', alpha=0.5)
+                    plt.xticks(y_pos, objects)
+                    plt.ylabel('RMSE')
+                    plt.xlabel('Fold')
+                    plt.title('Cross Validation, 10 Fold')
+                    
+                    tools = ct.ChartTools()
+                    p = tools.convert_base64(plt)
+
+                    res[key]['cv_plot'] = p
+                    res[key]['type'] = 'regressor'
+
                 self.recommender = res
             elif current['type'] == 'recommender:classifier':
                 input = self.extract_input(current, 1)
+
+                row = input.shape[0]
+                percent = float(current['sample_size']) / 100
+                y = df[current['target']]
+
+                if current['sample_type'] == 'random':
+                    df = input.sample(int(row * percent))
+                else:
+                    x_train, x_test, y_train, y_test = train_test_split(df, y, test_size=percent)
+                    df = x_test
+
                 rec = cr.ClassifierRecommender()
-                rec.set_data(input.copy())
+                rec.set_data(df.copy())
                 rec.define_target(current['target'])
                 rec.run()
                 res = rec.sort('accuracy')
+
+                for key, value in enumerate(res):
+                    objects = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                    y_pos = np.arange(len(objects))
+                    performance = value['cv']
+                    
+                    plt.clf()
+                    plt.bar(y_pos, performance, align='center', alpha=0.5)
+                    plt.xticks(y_pos, objects)
+                    plt.ylabel('Accuracy')
+                    plt.xlabel('Fold')
+                    plt.title('Cross Validation, 10 Fold')
+                    
+                    tools = ct.ChartTools()
+                    p = tools.convert_base64(plt)
+
+                    res[key]['cv_plot'] = p
+                    res[key]['type'] = 'classifier'
                 self.recommender = res
             self.process.pop(0)
         if len(self.shared_resource) == 0:

@@ -4,6 +4,11 @@ import os
 from werkzeug.utils import secure_filename
 import pandas as pd
 from flask_cors import CORS, cross_origin
+import json
+import base64
+import io
+
+import tools.FlowProcess as fp
 
 # --------------------------------------------------------------------------------------
 # ===================================== Helper Class ===================================
@@ -12,6 +17,8 @@ from flask_cors import CORS, cross_origin
 import user
 import files as fl
 import enterprise
+import log
+import project
 
 # ======================================================================================
 
@@ -265,18 +272,188 @@ def recycle_search(query=None):
 def redirect_recycle():
     return redirect("/recycle")
 
+
 # -- Projects
 @app.route("/projects")
 def projects():
     if session.get("login") is None:
         return redirect("/login")
-    return render_template("projects.html")
+    project_helper = project.Project()
+    all_project = {}
+    all_project = project_helper.get_user_project(session['id'])
+    return render_template("projects.html", projects=all_project)
+
 
 @app.route("/projects/<id>")
 def project_dashboard(id):
     if session.get("login") is None:
         return redirect("/login")
-    return render_template("project_dashboard.html")
+    user_helper = user.User()
+    user_helper.load_user(session['id'])
+    home_folder = user_helper.get_data()['home_folder']
+    project_helper = project.Project()
+    all_data = project_helper.scan_project(home_folder, id)
+    p = project_helper.get_project(id)
+    charts = []
+    for chart in all_data['charts']:
+        target = "upload/" + home_folder + "/projects/" + p['name'] + "/charts/" + chart  
+        with open(target, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+            charts.append("data:image/png;base64," + encoded_string)
+    return render_template("project_dashboard.html", charts=charts, data=p)
+
+@app.route("/workspace/<id>")
+def workspace(id):
+    file_helper = fl.Files()
+    user_file = file_helper.user_file(session['id'])
+    
+    user_helper = user.User()
+    user_helper.load_user(session['id'])
+    home_folder = user_helper.get_data()['home_folder']
+
+    project_helper = project.Project()
+    p = project_helper.get_project(id)
+
+    load_project = 0
+    metadata = {}
+    schema = {}
+
+    basedir = os.getcwd()
+    if os.path.exists(basedir + app.config['UPLOAD_FOLDER'] + "/" + home_folder + "/projects/" + p['name'] + "/metadata.json"):
+        if os.path.exists(basedir + app.config['UPLOAD_FOLDER'] + "/" + home_folder + "/projects/" + p['name'] + "/schema.json"):
+            metadata = json.load(open(basedir + app.config['UPLOAD_FOLDER'] + "/" + home_folder + "/projects/" + p['name'] + "/metadata.json"))
+            schema = json.load(open(basedir + app.config['UPLOAD_FOLDER'] + "/" + home_folder + "/projects/" + p['name'] + "/schema.json"))
+            load_project = 1
+    return render_template("flow.html", user_file=user_file, id=id, load_project=load_project, metadata=json.dumps(metadata), schema=json.dumps(schema))
+
+@app.route("/api/save/workspace", methods=['POST'])
+def save_workspace():
+    metadata = request.form['metadata']
+    schema = request.form['schema']
+    id = request.form['id']
+
+    user_helper = user.User()
+    user_helper.load_user(session['id'])
+    home_folder = user_helper.get_data()['home_folder']
+    
+    project_helper = project.Project()
+    p = project_helper.get_project(id)
+    
+    target = 'upload/' + home_folder + "/projects/" + p['name'] + '/'
+
+    with io.open(target + 'metadata.json', 'w', encoding='utf-8') as f:
+        f.write(metadata)
+    with io.open(target + 'schema.json', 'w', encoding='utf-8') as f:
+        f.write(schema)
+    return jsonify({
+        "err": 0
+    })
+    
+
+@app.route("/api/file/metadata/<id>")
+def file_metadata(id=None):
+    df = None
+    id = int(id)
+    file_helper = fl.Files()
+    file_helper.load_file(id)
+    target = file_helper.get_data()
+    df = pd.read_csv("upload/" + target['location'])
+    return jsonify(df.dtypes.apply(lambda x: x.name).to_dict())
+
+@app.route("/api/query/metadata", methods=['POST'])
+def generate_query_metadata():
+    res = []
+    if request.method == 'POST':
+        data = request.json['data']
+        for key, value in data.iteritems():
+            tmp = {}
+            if "int" in value:
+                tmp = {
+                    'id': key,
+                    'label': key,
+                    'type': 'integer'
+                }
+            elif "float" in value or 'double' in value:
+                tmp = {
+                    'id': key,
+                    'label': key,
+                    'type': 'double'
+                }
+            elif "object" in value:
+                tmp = {
+                    'id': key,
+                    'label': key,
+                    'type': 'string'
+                }
+            res.append(tmp)
+    return jsonify(res)
+
+
+@app.route("/report", methods=['POST'])
+def report():
+    metadata = str(request.form['metadata']).encode('utf8')
+    return render_template("report.html", metadata=metadata)
+
+
+@app.route("/recomend", methods=['POST'])
+def recommender():
+    metadata = str(request.form['metadata']).encode('utf8')
+    return render_template("recomender.html", metadata=metadata)
+
+@app.route("/api/run", methods=['POST'])
+def run():
+    metadata = json.loads(request.form['metadata'])
+    tools = fp.FlowProcess()
+    tools.set_metadata(metadata)
+    tools.run()
+    data = tools.get_current_data()
+    chart = tools.get_chart()
+    model = tools.get_model()
+    data_tables = []
+    co = 1
+    for key, value in data.iteritems():
+        descat = ''
+        desnum = ''
+        if len(value['data'][value['data'].columns[value['data'].dtypes == "object"]].columns) > 0:
+            descat = value['data'][value['data'].columns[value['data'].dtypes == "object"]].describe().to_html(classes='table table-hover table-bordered')
+        if len(value['data'][value['data'].columns[value['data'].dtypes == "int64"]].columns) > 0 or len(value['data'][value['data'].columns[value['data'].dtypes == "float64"]].columns) > 0:
+            desnum = value['data'].describe().to_html(classes='table table-hover table-bordered desc-num')
+        data_tables.append({
+            'count': co,
+            'table': value['data'].head(10).to_html(classes='table table-hover table-bordered data-finished'),
+            'describe_numeric': desnum,
+            'describe_categorical': descat
+        })
+        co += 1
+    model_html = []
+    for val in model:
+        if val['type'] == 'clf':
+            model_html.append(render_template("report/classifier.html", data=val))
+        elif val['type'] == 'regressor':
+            model_html.append(render_template("report/regressor.html", data=val))
+    return jsonify({
+        'data_html': render_template('report/data_list.html', data=data_tables),
+        'chart': chart,
+        'model': model,
+        'model_html': model_html
+    })
+
+@app.route("/api/recommend", methods=['POST'])
+def recommend():
+    metadata = json.loads(request.form['metadata'])
+    tools = fp.FlowProcess()
+    tools.set_metadata(metadata)
+    tools.run()
+    res = tools.get_recommender()
+    rank = []
+    for key, value in enumerate(res):
+        value['rank'] = key + 1
+        value['report'] = ''
+        
+        rank.append(render_template('recommender/recomended.html', data=value))
+    return jsonify({
+        'rank_result': rank
+    })
 
 # ======================================================================================
 
@@ -616,8 +793,46 @@ def restore_file(id_recycle=None):
     else:
         return jsonify({"err": 1, "msg": file_helper.err_msg()})
 
-# ======================================================================================
+@app.route("/api/project", methods=['POST'])
+def add_project():
+    if session.get("login") is None:
+        return redirect("/login")
 
+    name = request.form['name']
+    user_helper = user.User()
+    user_helper.load_user(session['id'])
+    home_folder = user_helper.get_data()['home_folder']
+    project_helper = project.Project()
+    if project_helper.add_project(session['id'], name, app.config['UPLOAD_FOLDER'], home_folder):
+        return jsonify({
+            'status': 1
+        })
+    else:
+        return jsonify({
+            'status': 0,
+            'msg': project_helper.get_error_msg()
+        })
+
+@app.route("/api/project/<id>", methods=['DELETE'])
+def delete_project(id=None):
+    if session.get("login") is None:
+        return redirect("/login")
+    
+    user_helper = user.User()
+    user_helper.load_user(session['id'])
+    home_folder = user_helper.get_data()['home_folder']
+    project_helper = project.Project()
+    if project_helper.delete_project(app.config['UPLOAD_FOLDER'], home_folder, id):
+        return jsonify({
+            'err': 0
+        })
+    else:
+        return jsonify({
+            'err': 1,
+            'msg': project_helper.get_error_msg()
+        })
+
+# ======================================================================================
 
 if __name__ == '__main__':
     app.run(debug=True)

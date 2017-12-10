@@ -1,25 +1,8 @@
-import tools.FlowProcess as fp
-import json
+from tools import chart_tools as ct
+import pandas as pd
 
-with open('Development/FlowProcess/Metadata/hr-model.json') as data_file:
-    metadata = json.load(data_file)
-tools = fp.FlowProcess()
-tools.set_metadata(metadata)
-tools.run()
-data = tools.get_current_data()
-chart = tools.get_chart()
-model = tools.get_model()
-data_tables = []
-co = 1
-for key, value in data.iteritems():
-    data_tables.append({
-        'count': co,
-        'table': value['data'].head(10).to_html(classes='table table-hover')
-    })
-    co += 1
-
-print {
-    'data': data_tables,
-    'chart': chart,
-    'model': model
-}
+tools = ct.ChartTools()
+df = pd.read_csv("dummy/hr-2.csv")
+df = df.groupby(['salary'])['satisfaction_level'].mean().reset_index()
+tools.set_dataset(df.copy())
+print tools.bar_chart('salary', 'satisfaction_level')

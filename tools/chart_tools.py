@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 import pandas as pd
+import numpy as np
 from pandas.plotting import *
 
 
@@ -31,7 +32,6 @@ class ChartTools(tools.Tools):
         df_fig = self.df[target].plot.box()
         fig = df_fig.get_figure()
         plt.title("Box Plot")
-        plt.show()
         return self.convert_base64(fig)
 
     def convert_base64(self, fig):
@@ -51,14 +51,16 @@ class ChartTools(tools.Tools):
         return self.convert_base64(fig)
 
     def pie_plot(self, target):
-        pie = df[target].value_counts()
+        pie = self.df[target].value_counts()
         df_fig = pie.plot.pie(figsize=(6, 6))
         fig = df_fig.get_figure()
         plt.title("Pie Plot")
         return self.convert_base64(fig)
 
     def bar_chart(self, x, y):
-        plt.bar(self.df[x], self.df[y], align='center', alpha=0.5)
+        y_pos = np.arange(len(self.df[x]))
+        plt.bar(y_pos, self.df[y], align='center', alpha=0.5)
+        plt.xticks(y_pos, self.df[x])
         plt.ylabel(y)
         plt.xlabel(x)
         plt.title('Bar Chart')

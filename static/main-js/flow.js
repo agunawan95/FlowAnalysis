@@ -135,6 +135,60 @@ var process_list = [
         tag: "correlation, matrix, chart"
     },
     {
+        id: "line-chart-module",
+        process_id: "chart:line",
+        background: "bg-dark",
+        image: "img/chart-corr_matrix.png",
+        name: "Line Chart Module",
+        type: "chart",
+        tag: "line, plot, chart"
+    },
+    {
+        id: "bar-chart-module",
+        process_id: "chart:bar",
+        background: "bg-dark",
+        image: "img/chart-corr_matrix.png",
+        name: "Bar Chart Module",
+        type: "chart",
+        tag: "bar, plot, chart"
+    },
+    {
+        id: "scatter-chart-module",
+        process_id: "chart:scatter",
+        background: "bg-dark",
+        image: "img/chart-corr_matrix.png",
+        name: "Scatter Chart Module",
+        type: "chart",
+        tag: "scatter, plot, chart"
+    },
+    {
+        id: "histogram-module",
+        process_id: "chart:hist",
+        background: "bg-dark",
+        image: "img/chart-corr_matrix.png",
+        name: "Histogram Module",
+        type: "chart",
+        tag: "histogram, plot, chart"
+    },
+    {
+        id: "pie-chart-module",
+        process_id: "chart:pie",
+        background: "bg-dark",
+        image: "img/chart-corr_matrix.png",
+        name: "Pie Chart Module",
+        type: "chart",
+        tag: "pie, plot, chart"
+    },
+    {
+        id: "box-chart-module",
+        process_id: "chart:box",
+        background: "bg-dark",
+        image: "img/chart-corr_matrix.png",
+        name: "Boxplot Chart Module",
+        type: "chart",
+        tag: "box, plot, chart"
+    },
+    {
         id: "decision-tree-module",
         process_id: "model:dt",
         background: "bg-dark",
@@ -231,6 +285,18 @@ function initDraggable(){
                 factorizeProcedure(leftPosition, topPosition);
             }else if(id == "chart:cm"){
                 correlationMatrixProcedure(leftPosition, topPosition);
+            }else if(id == "chart:line"){
+                lineChartProcedure(leftPosition, topPosition);
+            }else if(id == "chart:bar"){
+                barChartProcedure(leftPosition, topPosition);
+            }else if(id == "chart:scatter"){
+                scatterChartProcedure(leftPosition, topPosition);
+            }else if(id == "chart:pie"){
+                pieChartProcedure(leftPosition, topPosition);
+            }else if(id == "chart:box"){
+                boxPlotProcedure(leftPosition, topPosition);
+            }else if(id == "chart:hist"){
+                histogramProcedure(leftPosition, topPosition);
             }else if(id == "model:dt"){
                 decisionTreeProcedure(leftPosition, topPosition);
             }else if(id == "model:nb"){
@@ -334,6 +400,20 @@ $(document).ready(function(){
                 showLassoRegressionModule(operatorId);
             }else if(metadata[operatorId]['type'] == 'recommender:classifier'){
                 showClfRecommenderModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'recommender:regressor'){
+                showRegRecommenderModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'chart:scatter'){
+                showScatterChartModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'chart:bar'){
+                showBarChartModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'chart:line'){
+                showLineChartModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'chart:pie'){
+                showPieChartModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'chart:hist'){
+                showHistogramModule(operatorId);
+            }else if(metadata[operatorId]['type'] == 'chart:box'){
+                showBoxPlotModule(operatorId);
             }
             return true;
         },
@@ -374,7 +454,7 @@ $(document).ready(function(){
                 }
               }
               // metadata[linkData['toOperator']]['shape'] = metadata[linkData['fromOperator']]['shape'];
-            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge' || metadata[linkData['toOperator']]['type'] == 'model:dt' || metadata[linkData['toOperator']]['type'] == 'model:lr' || metadata[linkData['toOperator']]['type'] == 'model:nb' || metadata[linkData['toOperator']]['type'] == 'model:rt' || metadata[linkData['toOperator']]['type'] == 'model:svr' || metadata[linkData['toOperator']]['type'] == 'model:lasso' || metadata[linkData['toOperator']]['type'] == 'recommender:classifier'){
+            }else if(metadata[linkData['toOperator']]['type'] == 'process:cfilter' || metadata[linkData['toOperator']]['type'] == 'process:aggregate' || metadata[linkData['toOperator']]['type'] == 'process:sextract' || metadata[linkData['toOperator']]['type'] == 'process:fillna-aggregate' || metadata[linkData['toOperator']]['type'] == 'process:fillna-oc' || metadata[linkData['toOperator']]['type'] == 'process:fillna-value' || metadata[linkData['toOperator']]['type'] == 'process:formula' || metadata[linkData['toOperator']]['type'] == 'process:factorize' || metadata[linkData['toOperator']]['type'] == 'process:cmerge' || metadata[linkData['toOperator']]['type'] == 'model:dt' || metadata[linkData['toOperator']]['type'] == 'model:lr' || metadata[linkData['toOperator']]['type'] == 'model:nb' || metadata[linkData['toOperator']]['type'] == 'model:rt' || metadata[linkData['toOperator']]['type'] == 'model:svr' || metadata[linkData['toOperator']]['type'] == 'model:lasso' || metadata[linkData['toOperator']]['type'] == 'recommender:classifier' || metadata[linkData['toOperator']]['type'] == 'recommender:regressor' || metadata[linkData['toOperator']]['type'] == 'chart:scatter' || metadata[linkData['toOperator']]['type'] == 'chart:bar' || metadata[linkData['toOperator']]['type'] == 'chart:line' || metadata[linkData['toOperator']]['type'] == 'chart:pie' || metadata[linkData['toOperator']]['type'] == 'chart:hist' || metadata[linkData['toOperator']]['type'] == 'chart:box'){
                 metadata[linkData['toOperator']]['input_shape'] = metadata[linkData['fromOperator']]['shape']; 
             }
             metadata[linkData['fromOperator']]['link'].push(linkData['toOperator']);
@@ -406,7 +486,7 @@ $(document).ready(function(){
                 if(metadata[link['toOperator']]['type'] == 'process:join'){
                     link['toOperator']['metadata'] = {};
                 }
-            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize' || metadata[link['toOperator']]['type'] == 'process:cmerge' || metadata[link['toOperator']]['type'] == 'model:dt' || metadata[link['toOperator']]['type'] == 'model:lr' || metadata[link['toOperator']]['type'] == 'model:nb' || metadata[link['toOperator']]['type'] == 'model:rt' || metadata[link['toOperator']]['type'] == 'model:svr' || metadata[link['toOperator']]['type'] == 'model:lasso' || metadata[link['toOperator']]['type'] == 'recommender:classifier'){
+            }else if(metadata[link['toOperator']]['type'] == 'process:cfilter' || metadata[link['toOperator']]['type'] == 'process:aggregate' || metadata[link['toOperator']]['type'] == 'process:sextract' || metadata[link['toOperator']]['type'] == 'process:fillna-aggregation' || metadata[link['toOperator']]['type'] == 'process:fillna-oc' || metadata[link['toOperator']]['type'] == 'process:fillna-value' || metadata[link['toOperator']]['type'] == 'process:formula' || metadata[link['toOperator']]['type'] == 'process:factorize' || metadata[link['toOperator']]['type'] == 'process:cmerge' || metadata[link['toOperator']]['type'] == 'model:dt' || metadata[link['toOperator']]['type'] == 'model:lr' || metadata[link['toOperator']]['type'] == 'model:nb' || metadata[link['toOperator']]['type'] == 'model:rt' || metadata[link['toOperator']]['type'] == 'model:svr' || metadata[link['toOperator']]['type'] == 'model:lasso' || metadata[link['toOperator']]['type'] == 'recommender:classifier' || metadata[link['toOperator']]['type'] == 'recommender:regressor' || metadata[link['toOperator']]['type'] == 'chart:scatter' || metadata[link['toOperator']]['type'] == 'chart:bar' || metadata[link['toOperator']]['type'] == 'chart:line' || metadata[link['toOperator']]['type'] == 'chart:pie' || metadata[link['toOperator']]['type'] == 'chart:hist' || metadata[link['toOperator']]['type'] == 'chart:box'){
                 metadata[link['toOperator']]['input_shape'] = {};
             }
             metadata[link['toOperator']]['shape'] = {};
@@ -432,7 +512,6 @@ $(document).ready(function(){
 
 
 var operatorI = 0;
-var metadata = {};
 var host = "http://127.0.0.1:5000";
 
 function addFile(filename){
@@ -835,7 +914,94 @@ function clfRecommenderProcedure(left, top){
         type: 'recommender:classifier',
         name: 'clf-rec',
         input_shape: {},
-        target: ""
+        target: "",
+        sample_type: "",
+        sample_size: 0,
+        cv_size: 0
+    };
+    metadata[id] = data;
+}
+
+function regRecommenderProcedure(left, top){
+    var id = addOutputOperator('Regressor Recommender Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'recommender:regressor',
+        name: 'reg-rec',
+        input_shape: {},
+        target: "",
+        sample_type: "",
+        sample_size: 0,
+        cv_size: 0
+    };
+    metadata[id] = data;
+}
+
+function scatterChartProcedure(left, top){
+    var id = addOutputOperator('Scatter Chart Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'chart:scatter',
+        name: 'scatter',
+        x: '',
+        y: ''
+    };
+    metadata[id] = data;
+}
+
+function barChartProcedure(left, top){
+    var id = addOutputOperator('Bar Chart Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'chart:bar',
+        name: 'bar',
+        x: '',
+        y: ''
+    };
+    metadata[id] = data;
+}
+
+function lineChartProcedure(left, top){
+    var id = addOutputOperator('Line Chart Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'chart:line',
+        name: 'line',
+        x: '',
+        y: ''
+    };
+    metadata[id] = data;
+}
+
+function pieChartProcedure(left, top){
+    var id = addOutputOperator('Pie Chart Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'chart:pie',
+        name: 'pie',
+        target: '',
+    };
+    metadata[id] = data;
+}
+
+function histogramProcedure(left, top){
+    var id = addOutputOperator('Histogram Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'chart:hist',
+        name: 'hist',
+        target: ''
+    };
+    metadata[id] = data;
+}
+
+function boxPlotProcedure(left, top){
+    var id = addOutputOperator('Boxplot Chart Module', left, top);
+    var data = {
+        id_operation: id,
+        type: 'chart:box',
+        name: 'box',
+        target: ''
     };
     metadata[id] = data;
 }
@@ -1381,6 +1547,151 @@ function showClfRecommenderModule(id){
     $("#clfRecommenderModal").modal();
 }
 
+function showRegRecommenderModule(id){
+    $("#reg-rec-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#reg-rec-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#reg-rec-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#reg-rec-module-warning").hide();
+        $("#reg-rec-body").show();
+    }else{
+        $("#reg-rec-module-warning").show();
+        $("#reg-rec-module-perform").hide();
+        $("#reg-rec-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#reg-rec-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#regRecommenderModal").modal();
+}
+
+function showScatterChartModule(id){
+    $("#scatter-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#scatter-target-x").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#scatter-target-x").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#scatter-target-y").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#scatter-target-y").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#scatter-module-warning").hide();
+        $("#scatter-body").show();
+    }else{
+        $("#scatter-module-warning").show();
+        $("#scatter-module-perform").hide();
+        $("#scatter-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#scatter-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#scatterModal").modal();
+}
+
+function showBarChartModule(id){
+    $("#bar-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#bar-target-x").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#bar-target-x").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#bar-target-y").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#bar-target-y").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#bar-module-warning").hide();
+        $("#bar-body").show();
+    }else{
+        $("#bar-module-warning").show();
+        $("#bar-module-perform").hide();
+        $("#bar-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#bar-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#barModal").modal();
+}
+
+function showLineChartModule(id){
+    $("#line-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#line-target-x").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#line-target-x").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#line-target-y").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#line-target-y").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#line-module-warning").hide();
+        $("#line-body").show();
+    }else{
+        $("#line-module-warning").show();
+        $("#line-module-perform").hide();
+        $("#line-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#line-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#lineModal").modal();
+}
+
+function showPieChartModule(id){
+    $("#pie-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#pie-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#pie-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#pie-module-warning").hide();
+        $("#pie-body").show();
+    }else{
+        $("#pie-module-warning").show();
+        $("#pie-module-perform").hide();
+        $("#pie-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#pie-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#pieModal").modal();
+}
+
+function showBoxPlotModule(id){
+    $("#box-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#box-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#box-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#box-module-warning").hide();
+        $("#box-body").show();
+    }else{
+        $("#box-module-warning").show();
+        $("#box-module-perform").hide();
+        $("#box-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#box-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#boxModal").modal();
+}
+
+function showHistogramModule(id){
+    $("#hist-id").val(id);
+    if (!jQuery.isEmptyObject(metadata[id]['input_shape'])){
+        $("#hist-target").html("");
+        $.each(metadata[id]['input_shape'], function(index, value){
+            $("#hist-target").append('<option value="' + index + '">' + index + '</option>');
+        });
+        $("#hist-module-warning").hide();
+        $("#hist-body").show();
+    }else{
+        $("#hist-module-warning").show();
+        $("#hist-module-perform").hide();
+        $("#hist-body").hide();
+    }
+    var data = $("#content").flowchart('getData');
+    $("#hist-output-feet").val(Object.keys(data['operators'][id]['properties']['outputs']).length);
+    $("#histModal").modal();
+}
+
 function remakeOutputFeet(id, output_feet){
   var data = $('#content').flowchart('getData');
   var new_feet = {};
@@ -1720,11 +2031,99 @@ function performLassoRegressionModule(){
 function performClfRecommenderModule(){
     var id = $("#clf-rec-id").val();
     var target = $("#clf-rec-target").val();
+    var sample_type = $("#clf-rec-sample-size").val();
+    var sample_size = $("#clf-rec-sample-size").val();
+    var cv_fold = $("#clf-rec-cv-fold").val();
     metadata[id]['target'] = target;
+    metadata[id]['sample_type'] = sample_type;
+    metadata[id]['sample_size'] = parseInt(sample_size);
+    //metadata[id]['cv_fold'] = parseInt(cv_fold);
     metadata[id]['shape'] = metadata[id]['input_shape'];
     var output_feet = $("#clf-rec-output-feet").val();
     remakeOutputFeet(id, output_feet);
     $("#clfRecommenderModal").modal('hide');
+}
+
+function performRegRecommenderModule(){
+    var id = $("#reg-rec-id").val();
+    var target = $("#reg-rec-target").val();
+    var sample_type = $("#reg-rec-sample-size").val();
+    var sample_size = $("#reg-rec-sample-size").val();
+    var cv_fold = $("#reg-rec-cv-fold").val();
+    metadata[id]['target'] = target;
+    metadata[id]['sample_type'] = sample_type;
+    metadata[id]['sample_size'] = parseInt(sample_size);
+    //metadata[id]['cv_fold'] = parseInt(cv_fold);
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#reg-rec-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#regRecommenderModal").modal('hide');
+}
+
+function performScatterModule(){
+    var id = $("#scatter-id").val();
+    var x = $("#scatter-target-x").val();
+    var y = $("#scatter-target-y").val();
+    metadata[id]['x'] = x;
+    metadata[id]['y'] = y;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#scatter-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#scatterModal").modal('hide');
+}
+
+function performBarModule(){
+    var id = $("#bar-id").val();
+    var x = $("#bar-target-x").val();
+    var y = $("#bar-target-y").val();
+    metadata[id]['x'] = x;
+    metadata[id]['y'] = y;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#bar-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#barModal").modal('hide');
+}
+
+function performLineModule(){
+    var id = $("#line-id").val();
+    var x = $("#line-target-x").val();
+    var y = $("#line-target-y").val();
+    metadata[id]['x'] = x;
+    metadata[id]['y'] = y;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#line-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#lineModal").modal('hide');
+}
+
+function performPieModule(){
+    var id = $("#pie-id").val();
+    var target = $("#pie-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#pie-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#pieModal").modal('hide');
+}
+
+function performBoxModule(){
+    var id = $("#box-id").val();
+    var target = $("#box-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#box-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#boxModal").modal('hide');
+}
+
+function performHistModule(){
+    var id = $("#hist-id").val();
+    var target = $("#hist-target").val();
+    metadata[id]['target'] = target;
+    metadata[id]['shape'] = metadata[id]['input_shape'];
+    var output_feet = $("#hist-output-feet").val();
+    remakeOutputFeet(id, output_feet);
+    $("#histModal").modal('hide');
 }
 
 function getMetadata(){

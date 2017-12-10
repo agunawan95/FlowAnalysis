@@ -1,14 +1,14 @@
 <!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
+<ul class="nav nav-tabs" id="mytab" role="tablist">
     {% for value in data %}
-        <li class="nav-item"><a href="#data-{{ value.count }}" class="nav-link active" aria-controls="data-{{ value.count }}" role="tab" data-toggle="tab">data-{{ value.count }}</a></li>
+        <li class="nav-item"><a href="#data-{{ value.count }}" class="nav-link {% if loop.index == 1 %}active{% endif %}" aria-controls="data-{{ value.count }}" role="tab" data-toggle="tab">data-{{ value.count }}</a></li>
     {% endfor %}
 </ul>
 
 <!-- Tab panes -->
 <div class="tab-content">
     {% for value in data %}
-        <div role="tabpanel" class="tab-pane active" id="data-{{ value.count }}">
+        <div role="tabpanel" class="tab-pane {% if loop.index == 1 %}active{% endif %}" id="data-{{ value.count }}">
             <br>
             <h4>Data</h4>
             <hr>

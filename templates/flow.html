@@ -59,16 +59,16 @@
                     <li class="nav-item dropdown active">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-checkmark-circle"></i> Save</a></li>
-                            <li class="dropdown-item"><a href="#"><i class="lnr lnr-exit"></i> Exit to Project Menu</a></li>
+                            <li class="dropdown-item"><a href="#" onclick="save_workspace({{ id }})"><i class="lnr lnr-checkmark-circle"></i> Save</a></li>
+                            <li class="dropdown-item"><a href="/projects/{{ id }}"><i class="lnr lnr-exit"></i> Exit to Project Menu</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Specials <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown-item" id="addFile"><a href="#"><i class="lnr lnr-plus-circle"></i> Add Dataset</a></li>
-                            <li class="dropdown-item" id=""><a href="#"><i class="lnr lnr-star"></i> Add Predictive Model</a></li>
-                            <li class="dropdown-item" id=""><a href="#" onclick="clfRecommenderProcedure()"><i class="lnr lnr-rocket"></i> Add Recommend & Analyze</a></li>
+                            <li class="dropdown-item" id=""><a href="#" onclick="clfRecommenderProcedure()"><i class="lnr lnr-rocket"></i> Add Recommend & Analyze (Classifier)</a></li>
+                            <li class="dropdown-item" id=""><a href="#" onclick="regRecommenderProcedure()"><i class="lnr lnr-rocket"></i> Add Recommend & Analyze (Regressor)</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -166,7 +166,6 @@
                     <h4 class="page-header">Tools: </h4>
                     <button class="btn btn-danger btn-sm" onclick="deleteOperation()"><i class="lnr lnr-cross"></i> Delete Selected</button>
                     <button class="btn btn-primary btn-sm" onclick="sendData()"><i class="lnr lnr-undo"></i> Execute</button>
-                    <button class="btn btn-default btn-sm" onclick="testing()"><i class="lnr lnr-star"></i> Testing</button>
                     <button class="btn btn-success btn-sm" onclick="recommend()"><i class="lnr lnr-star"></i> Recommend & Analyze</button>
                     
                 </div>
@@ -202,12 +201,9 @@
                     </div>
                     <div class="modal-body">
                         <select name="file" id="file" class="form-control" data-live-search="true">
-                            <option data-token="hr-1.csv" value="1">hr-1.csv</option>
-                            <option data-token="hr-2.csv" value="2">hr-2.csv</option>
-                            <option data-token="west_nile.csv" value="3">west_nile.csv</option>
-                            <option data-token="west_nile_weather.csv" value="4">west_nile_weather.csv</option>
-                            <option data-token="hr-departments.csv" value="5">hr-departments.csv</option>
-                            <option data-token="hr-departments.csv" value="6">Bakery_Clean.csv</option>
+                            {% for file in user_file %}
+                                <option data-token="{{ file.name }}" value="{{ file.id }}">{{ file.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="modal-footer">
@@ -853,6 +849,174 @@
             </div>
         </div>
 
+        <!-- Scatter Chart Modal -->
+        <div class="modal" id="scatterModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Scatter Chart Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="scatter-id">
+                        <div class="form-group">
+                            <label for="target">Target: </label>
+                            <select name="scatter-target-x" id="scatter-target-x" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="target">Target: </label>
+                            <select name="scatter-target-y" id="scatter-target-y" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="scatter-module-perform" onclick="performScatterModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('scatter-id', 'scatterModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bar Chart Modal -->
+        <div class="modal" id="barModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Bar Chart Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="bar-id">
+                        <div class="form-group">
+                            <label for="target">Target: </label>
+                            <select name="bar-target-x" id="bar-target-x" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="target">Target: </label>
+                            <select name="bar-target-y" id="bar-target-y" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="bar-module-perform" onclick="performBarModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('bar-id', 'barModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Line Chart Modal -->
+        <div class="modal" id="lineModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Line Chart Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="line-id">
+                        <div class="form-group">
+                            <label for="target">Target: </label>
+                            <select name="line-target-x" id="line-target-x" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="target">Target: </label>
+                            <select name="line-target-y" id="line-target-y" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="line-module-perform" onclick="performBarModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('line-id', 'lineModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie Chart Modal -->
+        <div class="modal" id="pieModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Pie Chart Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="pie-id">
+                        <div class="form-group">
+                            <label for="target">Target: </label>
+                            <select name="pie-target" id="pie-target" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="pie-module-perform" onclick="performPieModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('pie-id', 'pieModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Boxplot Chart Modal -->
+        <div class="modal" id="boxModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Boxplot Chart Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="box-id">
+                        <div class="form-group">
+                            <label for="target">Target: </label>
+                            <select name="box-target" id="box-target" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="box-module-perform" onclick="performBoxModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('box-id', 'boxModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Histogram Chart Modal -->
+        <div class="modal" id="histModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Histogram Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="hist-id">
+                        <div class="form-group">
+                            <label for="target">Target: </label>
+                            <select name="hist-target" id="hist-target" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="hist-module-perform" onclick="performHistModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('hist-id', 'histModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Decision Tree Modal -->
         <div class="modal" id="decisionTreeModal">
             <div class="modal-dialog" role="document">
@@ -1038,11 +1202,85 @@
                                 <label for="target">Target: </label>
                                 <select name="clf-rec-target" id="clf-rec-target" class="form-control"></select>
                             </div>
+                            <div class="form-group">
+                                <label for="clf-rec-sample-type">Sample Type: </label>
+                                <select name="clf-rec-sample-type" id="clf-rec-sample-type" class="form-control">
+                                    <option value="random">Random</option>
+                                    <option value="stratified" selected>Stratified</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="clf-rec-sample-size">Sample Size: </label>
+                                <select name="clf-rec-sample-size" id="clf-rec-sample-size" class="form-control">
+                                    <option value="10">10%</option>
+                                    <option value="20">20%</option>
+                                    <option value="30">30%</option>
+                                    <option value="40">40%</option>
+                                    <option value="50">50%</option>
+                                </select>
+                            </div>
+                            <!--<div class="form-group">
+                                <label for="clf-rec-cv-fold">Cross Validation Fold: </label>
+                                <form action="">
+                                    <input id="clf-rec-cv-fold" type="text" class="form-control bfh-number" value="10" min="1" max="10">
+                                </form>
+                            </div>-->
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="clf-rec-module-perform" onclick="performClfRecommenderModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
                         <button class="btn btn-danger" onclick="deleteModule('clf-rec-id', 'clfRecommenderModal')"><i class="lnr lnr-trash"></i> Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Regressor Recommender Modal -->
+        <div class="modal" id="regRecommenderModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Regressor Recommender Module</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="reg-rec-id">
+                        <div id="reg-rec-body">
+                            <div class="form-group">
+                                <label for="target">Target: </label>
+                                <select name="reg-rec-target" id="reg-rec-target" class="form-control"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-rec-sample-type">Sample Type: </label>
+                                <select name="reg-rec-sample-type" id="reg-rec-sample-type" class="form-control">
+                                    <option value="random">Random</option>
+                                    <option value="stratified" selected>Stratified</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-rec-sample-size">Sample Size: </label>
+                                <select name="reg-rec-sample-size" id="reg-rec-sample-size" class="form-control">
+                                    <option value="10">10%</option>
+                                    <option value="20">20%</option>
+                                    <option value="30">30%</option>
+                                    <option value="40">40%</option>
+                                    <option value="50">50%</option>
+                                </select>
+                            </div>
+                            <!--<div class="form-group">
+                                <label for="reg-rec-cv-fold">Cross Validation Fold: </label>
+                                <form action="">
+                                    <input id="reg-rec-cv-fold" type="text" class="form-control bfh-number" value="10" min="1" max="10">
+                                </form>
+                            </div>-->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="reg-rec-module-perform" onclick="performClfRecommenderModule()"><i class="lnr lnr-magic-wand"></i> Execute</button>
+                        <button class="btn btn-danger" onclick="deleteModule('reg-rec-id', 'regRecommenderModal')"><i class="lnr lnr-trash"></i> Remove</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -1110,6 +1348,15 @@
         <script src="{{ url_for('static', filename='select2/select2.js') }}"></script>
         <script src="{{ url_for('static', filename='custom-scroll/jquery.mCustomScrollbar.concat.min.js') }}"></script>
 
+        <script src="{{ url_for('static', filename='ios-loader/js/spin.min.js') }}"></script>        
+        <script src="{{ url_for('static', filename='ios-loader/js/iosOverlay.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='ios-loader/css/iosOverlay.css') }}">
+        
+        <script>
+            var metadata = {};
+            var schema = {};
+        </script>
+
         <!-- JQuery Flow -->
         <script src="{{ url_for('static', filename='js/jquery.flowchart.min.js') }}"></script>
         <script src="{{ url_for('static', filename='main-js/flow.js') }}"></script>
@@ -1130,6 +1377,54 @@
                 autoExpandScrollbar:true,
                 advanced:{autoExpandHorizontalScroll:true}
             });
+
+            function save_workspace(id){
+                var metadata = getMetadata();
+                var schema = getSchema();
+                var opts = {
+                    lines: 13, // The number of lines to draw
+                    length: 11, // The length of each line
+                    width: 5, // The line thickness
+                    radius: 17, // The radius of the inner circle
+                    corners: 1, // Corner roundness (0..1)
+                    rotate: 0, // The rotation offset
+                    color: '#FFF', // #rgb or #rrggbb
+                    speed: 1, // Rounds per second
+                    trail: 60, // Afterglow percentage
+                    shadow: false, // Whether to render a shadow
+                    hwaccel: false, // Whether to use hardware acceleration
+                    className: 'spinner', // The CSS class to assign to the spinner
+                    zIndex: 2e9, // The z-index (defaults to 2000000000)
+                    top: 'auto', // Top position relative to parent in px
+                    left: 'auto' // Left position relative to parent in px
+                };
+                var target = document.createElement("div");
+                document.body.appendChild(target);
+                var spinner = new Spinner(opts).spin(target);
+                var overlay = iosOverlay({
+                    text: "Loading",
+                    spinner: spinner
+                });
+                $.post('/api/save/workspace', {id:id, metadata:JSON.stringify(metadata), schema:JSON.stringify(schema)}, function(data){
+                    overlay.update({
+                        text: "Success!",
+                        icon: "{{ url_for('static', filename='ios-loader/img/check.png') }}"
+                    });
+                    window.setTimeout(function(){
+                        overlay.hide();
+                    }, 100);
+                });
+            }
+
+            {% if load_project == 1 %}
+                
+                $(document).ready(function(){
+                    metadata = {{ metadata|safe }};
+                    schema = {{ schema|safe }};
+                    $("#content").flowchart('setData', schema);
+                });
+                
+            {% endif %}
 
             function testing(){
                 var data = $("#content").flowchart('getData');

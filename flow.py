@@ -157,6 +157,7 @@ def recommend():
     for key, value in enumerate(res):
         value['rank'] = key + 1
         value['report'] = ''
+        
         rank.append(render_template('recommender/recomended.html', data=value))
     return jsonify({
         'rank_result': rank

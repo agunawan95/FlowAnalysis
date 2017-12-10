@@ -23,6 +23,76 @@
         $("#add-project-modal").modal();
     }
 
+    function add_project(){
+        var name = $("#project_name").val();
+        $.post("/api/project", {name: name}, function(res){
+            if(parseInt(res['status']) == 0){
+                $.notify({
+                    // options
+                    icon: 'lnr lnr-warning',
+                    message: res['msg']
+                },{
+                    // settings
+                    type: 'danger',
+                    z_index: 9999
+                });
+            }else{
+                $.notify({
+                    // options
+                    icon: 'lnr lnr-checkmark-circle',
+                    message: 'Success!'
+                },{
+                    // settings
+                    type: 'success',
+                    z_index: 9999
+                });
+                setTimeout(location.reload.bind(location), 800);
+            }
+        });
+    }
+
+    function remove_project(id){
+        $.confirm({
+            title: 'Are you sure?',
+            content: 'By doing this, all file in projects will be lost',
+            buttons: {
+                confirm: {
+                    text: 'Confirm',
+                    btnClass: 'btn-red',
+                    action: function(){
+                        $.delete("/api/project/" + id, {}, function(data){
+                            if(parseInt(data['err']) == 1){
+                                $.notify({
+                                    // options
+                                    icon: 'lnr lnr-warning',
+                                    message: data['msg']
+                                },{
+                                    // settings
+                                    type: 'danger',
+                                    z_index: 9999
+                                });
+                            }else{
+                               $.notify({
+                                    // options
+                                    icon: 'lnr lnr-checkmark-circle',
+                                    message: 'Success!'
+                                },{
+                                    // settings
+                                    type: 'success',
+                                    z_index: 9999
+                                });
+                                setTimeout(location.reload.bind(location), 800);
+                            }
+                        });
+                    }
+                },
+                cancel: function () {
+
+                }
+            }
+        });
+    }
+
     $(document).ready(function(){
         $("#search-btn").click(function(){
             var query = $("#search").val();
@@ -69,19 +139,21 @@
             <thead>
                 <tr>
                     <th width="5%">#</th>
-                    <th width="70%">Project</th>
-                    <th width="25%">Tools</th>
+                    <th width="80%">Project</th>
+                    <th width="15%">Tools</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>HR Left Prediction</td>
-                    <td>
-                        <button class="btn btn-success btn-sm"><i class="lnr lnr-magnifier"></i></button>
-                        <button class="btn btn-danger btn-sm"><i class="lnr lnr-trash"></i></button>
-                    </td>
-                </tr>
+                {% for project in projects %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ project.name }}</td>
+                        <td>
+                            <a href="/projects/{{ project.id }}" class="btn btn-success btn-sm"><i class="lnr lnr-magnifier"></i></a>
+                            <button class="btn btn-danger btn-sm" onclick="remove_project({{ project.id }})"><i class="lnr lnr-trash"></i></button>
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -114,7 +186,7 @@
                     </div>           
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="refresh()"><i class="lnr lnr-plus-circle"></i> Add</button>
+                    <button type="button" class="btn btn-primary" onclick="add_project()"><i class="lnr lnr-plus-circle"></i> Add</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>

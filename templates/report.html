@@ -45,6 +45,10 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/examples/bower_components/selectize/dist/css/selectize.bootstrap3.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='query-builder/dist/css/query-builder.default.css') }}" id="qb-theme">
         <!--End of Query Builder Package -->
+        
+        <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     </head>
     <body>
         <style>
@@ -103,11 +107,7 @@
             </div>
         </div>
 
-        <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="http://code.jquery.com/jquery-1.12.2.min.js"></script>
         <!-- <script src="{{ url_for('static', filename='query-builder/bower_components/jquery/dist/jquery.js') }}"></script> -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="{{ url_for('static', filename='js/intro.js') }}"></script>
@@ -129,6 +129,10 @@
 
         <script>
             $(document).ready(function(){
+                $('#mytab a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                })
                 var opts = {
                     lines: 13, // The number of lines to draw
                     length: 11, // The length of each line
@@ -163,7 +167,7 @@
                     if(status == 200){
                         $("#table-list").append(res['data_html']);
                         res['chart'].forEach(element => {
-                            $("#chart-list").append('<div class="row"><div class="col-sm-12"><div class="text-center"><div class="card"><img src="' + element['img'] + '" alt="Card image" class="img-responsive"><div class="card-footer text-muted"><div class="text-right"><a href="' + element['img'] + '" download="filename.jpg" class="btn btn-primary btn-sm"><i class="lnr lnr-download"></i></a>&nbsp;<button class="btn btn-success btn-sm"><i class="lnr lnr-checkmark-circle"></i> Save</button></div></div></div></div></div></div>');
+                            $("#chart-list").append('<div class="row"><div class="col-sm-12"><div class="text-center"><div class="card"><img src="' + element['img'] + '" alt="Card image"><div class="card-footer text-muted"><div class="text-right"><a href="' + element['img'] + '" download="' + element['title'] + '.jpg" class="btn btn-primary btn-sm"><i class="lnr lnr-download"></i></a>&nbsp;<button class="btn btn-success btn-sm"><i class="lnr lnr-checkmark-circle"></i> Save</button></div></div></div></div></div></div><br>');
                         });
                         res['model_html'].forEach(element => {
                             $("#model-list").append(element);
@@ -178,14 +182,6 @@
                     }
                 });
             });
-
-            function download_file(str){
-                console.log(str);
-                //window.open = str;
-                //$.post('/api/downloadbase64', {'img': str}, function(retData) {
-                    //alert(retData);
-                //}); 
-            }
         </script>
 
     </body>
